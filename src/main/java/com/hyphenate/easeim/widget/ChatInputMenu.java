@@ -73,6 +73,7 @@ public class ChatInputMenu extends LinearLayout implements ChatPrimaryMenuListen
     public void onFaceViewClicked(boolean state) {
         if(state){
             emojiconContainer.setVisibility(View.GONE);
+            chatPrimaryMenu.showNormalFaceImage();
         }else{
             emojiconContainer.setVisibility(View.VISIBLE);
         }
@@ -104,5 +105,7 @@ public class ChatInputMenu extends LinearLayout implements ChatPrimaryMenuListen
         chatPrimaryMenu.showSoftKeyboard();
     }
 
-
+    public boolean isEmojiViewVisible(){
+        return emojiconContainer.getVisibility() == View.VISIBLE;
+    }
 }

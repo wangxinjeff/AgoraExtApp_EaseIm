@@ -90,14 +90,11 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
                     public void run() {
                         showSelectedFaceImage();
                         chatMenuListener.onFaceViewClicked(false);
-
                     }
                 }, 50);
             } else {
                 showSoftKeyboard();
-                showNormalFaceImage();
                 chatMenuListener.onFaceViewClicked(true);
-
             }
         } else if (id == R.id.btn_send) {
             if (!etContent.getText().toString().isEmpty()) {
@@ -111,12 +108,12 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
         }
     }
 
-    private void showNormalFaceImage(){
+    public void showNormalFaceImage(){
         faceNormal.setVisibility(View.VISIBLE);
         faceCheck.setVisibility(View.INVISIBLE);
     }
 
-    private void showSelectedFaceImage(){
+    public void showSelectedFaceImage(){
         faceNormal.setVisibility(View.INVISIBLE);
         faceCheck.setVisibility(View.VISIBLE);
     }
@@ -197,5 +194,11 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
     @Override
     public void onEditTextHasFocus(boolean hasFocus) {
 
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        handler.removeCallbacksAndMessages(null);
     }
 }

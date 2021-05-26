@@ -142,6 +142,9 @@ public class ChatTotalLayout extends RelativeLayout implements View.OnClickListe
             @Override
             public void onChanged(boolean isSoftInputShow, int softInputHeight, int viewOffset) {
                 if (isSoftInputShow) {
+                    if(chatInputMenu.isEmojiViewVisible()){
+                        chatInputMenu.onFaceViewClicked(true);
+                    }
                     chatInputMenu.setTranslationY(chatInputMenu.getTranslationY() - viewOffset);
                 } else {
                     chatInputMenu.setTranslationY(0);
