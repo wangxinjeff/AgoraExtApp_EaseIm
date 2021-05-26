@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#00FFFFFF">
 
-    <com.hyphenate.ChatTotalLayout
+    <com.hyphenate.easeim.widget.ChatTotalLayout
         android:id="@+id/chat_total"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

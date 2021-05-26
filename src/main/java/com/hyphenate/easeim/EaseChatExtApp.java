@@ -1,21 +1,10 @@
 package com.hyphenate.easeim;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hyphenate.ChatTotalLayout;
+import com.hyphenate.easeim.widget.ChatTotalLayout;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMChatRoomChangeListener;
 import com.hyphenate.EMError;
@@ -24,34 +13,19 @@ import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCmdMessageBody;
-import com.hyphenate.chat.EMCustomMessageBody;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMUserInfo;
 import com.hyphenate.easeim.constant.DemoConstant;
-import com.hyphenate.easeim.domain.Gift;
-import com.hyphenate.easeim.interfaces.GiftViewListener;
-import com.hyphenate.easeim.modules.danmaku.Danmaku;
-import com.hyphenate.easeim.modules.danmaku.DanmakuCreator;
-import com.hyphenate.easeim.modules.danmaku.DanmakuView;
-import com.hyphenate.easeim.utils.ScreenUtil;
-import com.hyphenate.easeim.interfaces.ChatInputMenuListener;
-import com.hyphenate.easeim.utils.SoftInputUtil;
-import com.hyphenate.easeim.widget.ChatInputMenu;
-import com.hyphenate.easeim.widget.GiftView;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
-import com.hyphenate.easeim.modules.danmaku.DanmakuManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.agora.extension.AgoraExtAppBase;
-import io.agora.extension.AgoraExtAppContext;
 import io.agora.extension.AgoraExtAppRoomInfo;
 import io.agora.extension.AgoraExtAppUserInfo;
 
