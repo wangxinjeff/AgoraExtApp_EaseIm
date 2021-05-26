@@ -141,6 +141,7 @@ public class DanmakuView extends RelativeLayout {
                 break;
         }
         if(!danmaku.giftUrl.isEmpty()){
+            mDanmaku.color = "#ffffffff";
             layout_root.setBackground(context.getResources().getDrawable(randomBackground()));
             avatar.setImageDrawable(content.getResources().getDrawable(R.mipmap.ease_chatting_biaoqing_btn_normal));
             Glide.with(context.getApplicationContext()).load(danmaku.avatarUrl)

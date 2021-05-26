@@ -60,7 +60,6 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
     private void initView(){
         rootBottom = findViewById(R.id.bottom_root);
         etContent = findViewById(R.id.edit_content);
-        etContent.setImeOptions(EditorInfo.IME_ACTION_SEND);
         faceView = findViewById(R.id.view_face);
         faceNormal =findViewById(R.id.face_normal);
         faceCheck = findViewById(R.id.face_checked);
@@ -85,6 +84,7 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
         if (id == R.id.view_face) {
             if (faceNormal.getVisibility() == View.VISIBLE) {
                 hideSoftKeyboard();
+                etContent.requestFocus();
                 //延时解决软键盘弹出闪屏的问题
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -135,6 +135,7 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
             if (activity.getCurrentFocus() != null)
                 inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+        etContent.clearFocus();
     }
 
     @Override
@@ -187,6 +188,9 @@ public class ChatPrimaryMenu extends LinearLayout implements IChatPrimaryMenu, V
     public void onClickKeyboardSendBtn(String content) {
         if(!content.isEmpty()){
             chatMenuListener.onSendBtnClicked(content);
+            hideSoftKeyboard();
+            showNormalFaceImage();
+            etContent.setText("");
         }
     }
 

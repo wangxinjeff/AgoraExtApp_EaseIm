@@ -38,9 +38,7 @@ public class InputEditText extends androidx.appcompat.widget.AppCompatEditText i
                 || actionId == EditorInfo.IME_ACTION_DONE
                 || (event != null && KeyEvent.KEYCODE_ENTER == event.getKeyCode() && KeyEvent.ACTION_DOWN == event.getAction())) {
             String s = getText().toString();
-            hasFocusable();
             if(listener != null) {
-                setText("");
                 listener.onClickKeyboardSendBtn(s);
             }
             return true;

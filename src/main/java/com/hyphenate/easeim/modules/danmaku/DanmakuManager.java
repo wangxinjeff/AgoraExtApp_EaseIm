@@ -6,7 +6,9 @@ import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.interfaces.Pool;
+import com.hyphenate.easeim.utils.RandomUtil;
 import com.hyphenate.easeim.utils.ScreenUtil;
 import com.hyphenate.util.EMLog;
 
@@ -259,14 +261,7 @@ public class DanmakuManager {
         }
 
         public int getDurationScroll() {
-            if (durationScroll == 0) {
-                durationScroll = 10000;
-            }
-            return durationScroll;
-        }
-
-        public void setDurationScroll(int durationScroll) {
-            this.durationScroll = durationScroll;
+            return RandomUtil.nextInt(5, 10)*1000;
         }
 
         public int getDurationTop() {

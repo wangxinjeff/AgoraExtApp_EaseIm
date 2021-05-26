@@ -52,8 +52,8 @@ public class DanmakuCreator {
             danmaku.avatarUrl = message.getStringAttribute(DemoConstant.AVATAR_URL, "");
         }
         danmaku.mode = Danmaku.Mode.scroll;
-        danmaku.size = ScreenUtil.autoSize(40, 36);
-
+        danmaku.size = ScreenUtil.autoSize(40);
+        danmaku.color = randomColor();
         return danmaku;
     }
 
