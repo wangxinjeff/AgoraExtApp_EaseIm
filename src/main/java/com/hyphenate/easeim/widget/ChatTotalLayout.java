@@ -34,7 +34,9 @@ import com.hyphenate.easeim.utils.SoftInputUtil;
 import com.hyphenate.easeim.widget.ChatInputMenu;
 import com.hyphenate.easeim.widget.GiftView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ChatTotalLayout extends RelativeLayout implements View.OnClickListener, View.OnTouchListener, ChatInputMenuListener, GiftViewListener {
@@ -127,10 +129,22 @@ public class ChatTotalLayout extends RelativeLayout implements View.OnClickListe
         mDanmakuSend = findViewById(R.id.etSend);
 
         giftView = findViewById(R.id.gift_view);
+        initData();
         gift = findViewById(R.id.gift);
         initListener();
     }
 
+    private void initData(){
+        List<Gift> giftList = new ArrayList<>();
+        giftList.add(new Gift("鲜花", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng00ac5efe8c1d9a682b605523806cba0a7663025682aceda8973fd30f4e9d25aa", "50","呐~这朵花花送给你"));
+        giftList.add(new Gift("比心", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPnga261018b5c2d2d1b0fb81d42ea8149f2bed327c2b06afeedcba7d0dd1bc70613", "100","老师好棒，我是你的铁粉"));
+        giftList.add(new Gift("鸡腿", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPngb457abd9d2e7f4561a59d22a51db8f6622a9fcec37ed6b8d0d1e239c73da65e6", "200","讲得好，加鸡腿"));
+        giftList.add(new Gift("可乐", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPngebbd7053ac2c14d970abc8f73d84d3c24183ef6a6872bf1f64125b43d0dbdfd1", "200","一起干了这杯82年的可乐"));
+        giftList.add(new Gift("润喉糖", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPngbb46fbcc43fbbf8e1bd4cbbbf9039c6f145a0238e0db2b5c422d94d4d51c5ffc", "200","老师辛苦了，润润喉"));
+        giftList.add(new Gift("血包", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng8001de704f6f6b801a88bdfa4c36765c1e7b162eee0dbc57d82ecd1ae9385aec", "500","给老师回回血"));
+        giftList.add(new Gift("火箭", "https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPnge79dd141528e728de3f138525972396633e0d925aae12eb311f566bc8eb8ee9e", "500","神仙老师，浑身都是优点"));
+        giftView.init(giftList, "2000");
+    }
     private void initListener() {
         mContainer.setOnTouchListener(this);
         mDanmakuSend.setOnClickListener(this);
