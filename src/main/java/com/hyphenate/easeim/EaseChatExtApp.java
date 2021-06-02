@@ -44,6 +44,8 @@ public class EaseChatExtApp extends AgoraExtAppBase {
 
     private int loginLimit;
     private int joinLimit;
+    private boolean isAllMute;
+    private boolean isSingleMute;
 
     private EMMessageListener messageListener;
     private EMChatRoomChangeListener chatRoomChangeListener;
@@ -56,6 +58,8 @@ public class EaseChatExtApp extends AgoraExtAppBase {
         this.context = context;
         loginLimit = 0;
         joinLimit = 0;
+        isAllMute = false;
+        isSingleMute = false;
         EaseIM.getInstance().init(context);
     }
 
@@ -93,6 +97,7 @@ public class EaseChatExtApp extends AgoraExtAppBase {
     public void onExtAppUnloaded() {
         totalLayout.cancelHandler();
         cancelEaseListener();
+        EMClient.getInstance().chatroomManager().leaveChatRoom(chatRoomId);
         logoutIM();
     }
 
@@ -191,38 +196,41 @@ public class EaseChatExtApp extends AgoraExtAppBase {
 
             @Override
             public void onMuteListAdded(String chatRoomId, List<String> mutes, long expireTime) {
-                for (String member : mutes) {
-                    totalLayout.sendHandleEnable(context.getResources().getString(R.string.you_have_been_silenced), false);
-                }
             }
 
             @Override
             public void onMuteListRemoved(String chatRoomId, List<String> mutes) {
-                for (String member : mutes) {
-                    totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
-                }
             }
 
             @Override
             public void onWhiteListAdded(String chatRoomId, List<String> whitelist) {
-
+                for (String member : whitelist) {
+                    EMLog.e(TAG, "onWhiteListAdded:" + member);
+                    if (member.equals(EMClient.getInstance().getCurrentUser())) {
+                        isSingleMute = true;
+                        if (!isAllMute) {
+                            totalLayout.sendHandleEnable(context.getResources().getString(R.string.you_have_been_silenced), false);
+                        }
+                    }
+                }
             }
 
             @Override
             public void onWhiteListRemoved(String chatRoomId, List<String> whitelist) {
-
+                for (String member : whitelist) {
+                    EMLog.e(TAG, "onWhiteListRemoved:" + member);
+                    if (member.equals(EMClient.getInstance().getCurrentUser())) {
+                        isSingleMute = false;
+                        if (!isAllMute) {
+                            totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
+                        }
+                    }
+                }
             }
 
             @Override
             public void onAllMemberMuteStateChanged(String roomId, boolean isMuted) {
-                if (chatRoomId.equals(roomId)) {
-                    if (isMuted) {
-                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.total_silence), false);
-                    } else {
-                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
-                    }
 
-                }
             }
 
             @Override
@@ -241,8 +249,23 @@ public class EaseChatExtApp extends AgoraExtAppBase {
             }
 
             @Override
-            public void onAnnouncementChanged(String chatRoomId, String announcement) {
-
+            public void onAnnouncementChanged(String roomId, String announcement) {
+                EMLog.e(TAG, "announcement_change:" + announcement);
+                if (chatRoomId.equals(roomId)) {
+                    if (announcement.substring(0, 1).equals("0")) {
+                        isAllMute = false;
+                        if (isSingleMute) {
+                            totalLayout.sendHandleEnable(context.getResources().getString(R.string.you_have_been_silenced), true);
+                        } else {
+                            totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
+                        }
+                    } else if (announcement.substring(0, 1).equals("1")) {
+                        isAllMute = true;
+                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.total_silence), false);
+                    } else {
+                        EMLog.e(TAG, "announcement_change:" + announcement);
+                    }
+                }
             }
         };
         EMClient.getInstance().chatroomManager().addChatRoomChangeListener(chatRoomChangeListener);
@@ -272,6 +295,9 @@ public class EaseChatExtApp extends AgoraExtAppBase {
                     loginIM(userName, pwd);
                 } catch (HyphenateException e) {
                     e.printStackTrace();
+                    EMLog.e(TAG, "create failed:" + e.getErrorCode() + ":" + e.getDescription());
+                    totalLayout.sendHandleToast(context.getResources().getString(R.string.register_failed) + ":" + e.getDescription());
+                    totalLayout.sendHandleEnable(context.getResources().getString(R.string.register_failed), false);
                 }
             }
         }).start();
@@ -295,9 +321,9 @@ public class EaseChatExtApp extends AgoraExtAppBase {
 
             @Override
             public void onError(int code, String error) {
-                EMLog.e("Login:", code + ":" + error);
+                EMLog.e(TAG, "login failed:" + code + ":" + error);
                 if (loginLimit == 2) {
-                    totalLayout.sendHandleToast(context.getResources().getString(R.string.login_failed));
+                    totalLayout.sendHandleToast(context.getResources().getString(R.string.login_failed) + ":" + error);
                     totalLayout.sendHandleEnable(context.getResources().getString(R.string.login_failed), false);
                     return;
                 }
@@ -326,15 +352,14 @@ public class EaseChatExtApp extends AgoraExtAppBase {
         EMClient.getInstance().chatroomManager().joinChatRoom(chatRoomId, new EMValueCallBack<EMChatRoom>() {
             @Override
             public void onSuccess(EMChatRoom value) {
-                EMLog.e("Login:", "join success");
                 isAllMemberMuted();
             }
 
             @Override
             public void onError(int error, String errorMsg) {
-                EMLog.e("Login:", "join  " + error + ":" + errorMsg);
+                EMLog.e(TAG, "join failed:" + error + ":" + errorMsg);
                 if (joinLimit == 2) {
-                    totalLayout.sendHandleToast(context.getResources().getString(R.string.join_failed));
+                    totalLayout.sendHandleToast(context.getResources().getString(R.string.join_failed) + ":" + errorMsg);
                     totalLayout.sendHandleEnable(context.getResources().getString(R.string.join_failed), false);
                     return;
                 }
@@ -353,15 +378,51 @@ public class EaseChatExtApp extends AgoraExtAppBase {
 
     /**
      * 判断聊天室是否是全员禁言状态
+     * 获取公告的首字符判断是否是全员禁言
+     * 0 否
+     * 1 是
      */
     private void isAllMemberMuted() {
-        EMClient.getInstance().chatroomManager().asyncFetchChatRoomFromServer(chatRoomId, new EMValueCallBack<EMChatRoom>() {
+        EMClient.getInstance().chatroomManager().asyncFetchChatRoomAnnouncement(chatRoomId, new EMValueCallBack<String>() {
             @Override
-            public void onSuccess(EMChatRoom value) {
-                if (value.isAllMemberMuted()) {
-                    totalLayout.sendHandleEnable(context.getResources().getString(R.string.total_silence), false);
-                } else {
+            public void onSuccess(String value) {
+                if (value.isEmpty()) {
                     totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
+                } else {
+                    if (value.substring(0, 1).equals("0")) {
+                        isAllMute = false;
+                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.send_danmaku), true);
+                    } else if (value.substring(0, 1).equals("1")) {
+                        isAllMute = true;
+                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.total_silence), false);
+                    } else {
+                        EMLog.e(TAG, "fetch_announcement:" + value);
+                    }
+                }
+                checkSingleMute();
+            }
+
+            @Override
+            public void onError(int error, String errorMsg) {
+                EMLog.e(TAG, "fetch_announcement failed: " + error + ":" + errorMsg);
+            }
+        });
+    }
+
+    /**
+     * 判断是否被单独禁言
+     * 以白名单实现
+     */
+    private void checkSingleMute() {
+        EMClient.getInstance().chatroomManager().checkIfInChatRoomWhiteList(chatRoomId, new EMValueCallBack<Boolean>() {
+            @Override
+            public void onSuccess(Boolean value) {
+                EMLog.e(TAG, "checkIfInChatRoomWhiteList:" + value);
+                isSingleMute = value;
+                if (value) {
+                    if (!isAllMute) {
+                        totalLayout.sendHandleEnable(context.getResources().getString(R.string.you_have_been_silenced), false);
+                    }
                 }
             }
 
@@ -371,7 +432,6 @@ public class EaseChatExtApp extends AgoraExtAppBase {
             }
         });
     }
-
 
 
 }
