@@ -315,6 +315,7 @@ public class EaseChatExtApp extends AgoraExtAppBase {
                 EMUserInfo info = new EMUserInfo();
                 info.setNickName(nickName);
                 info.setAvatarUrl(avatarUrl);
+                info.setExt(String.valueOf(DemoConstant.ROLE_STUDENT));
                 EaseIM.getInstance().updateOwnInfo(info);
                 joinChatRoom();
             }
