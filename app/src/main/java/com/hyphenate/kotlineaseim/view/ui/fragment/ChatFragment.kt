@@ -39,7 +39,7 @@ import com.hyphenate.util.UriUtils
 import com.hyphenate.util.VersionUtils
 import java.io.File
 
-class ChatFragment : Fragment(), EMMessageListener, InputMsgListener {
+class ChatFragment : Fragment(), InputMsgListener {
     //伴生对象
     companion object{
         const val TAG = "ChatFragment"
@@ -115,48 +115,14 @@ class ChatFragment : Fragment(), EMMessageListener, InputMsgListener {
         })
         recyclerView.adapter = adapter
         adapter.setData(con.allMessages)
-//        LiveDataBus.get().with("key").observe(viewLifecycleOwner, {
-//            when (it.toString()) {
-//                "send" -> {
-//                    adapter.setData(con.allMessages)
-//                    recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
-//                }
-//            }
-//        })
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        EMClient.getInstance().chatManager().addMessageListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        EMClient.getInstance().chatManager().removeMessageListener(this)
-    }
-
-    override fun onMessageReceived(messages: MutableList<EMMessage>?) {
-        var adapter = recyclerView.adapter as MessageAdapter
-        activity?.runOnUiThread {
-            adapter.setData(con.allMessages)
-            recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
-        }
-    }
-
-    override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
-    }
-
-    override fun onMessageRead(messages: MutableList<EMMessage>?) {
-    }
-
-    override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
-    }
-
-    override fun onMessageRecalled(messages: MutableList<EMMessage>?) {
-    }
-
-    override fun onMessageChanged(message: EMMessage?, change: Any?) {
+        LiveDataBus.get().with("key").observe(viewLifecycleOwner, {
+            when (it.toString()) {
+                "receiveMsg" -> {
+                    adapter.setData(con.allMessages)
+                    recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+                }
+            }
+        })
 
     }
 
@@ -271,8 +237,6 @@ class ChatFragment : Fragment(), EMMessageListener, InputMsgListener {
     private fun sendMessage(message: EMMessage){
         message.chatType = EMMessage.ChatType.ChatRoom
         EMClient.getInstance().chatManager().sendMessage(message)
-//        LiveDataBus.get().with("key")
-//            .postValue("send")
         adapter.setData(con.allMessages)
         recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
     }

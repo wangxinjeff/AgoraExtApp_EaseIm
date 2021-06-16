@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.hyphenate.EMMessageListener
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.kotlineaseim.DataGenerator
@@ -39,7 +40,7 @@ import java.io.File
 
 
 
-class ChatViewPager : Fragment(){
+class ChatViewPager : Fragment(), EMMessageListener{
     companion object{
         const val TAG = "ChatViewPager"
     }
@@ -70,13 +71,11 @@ class ChatViewPager : Fragment(){
         val tabLayoutMediator = TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             if(position == 0) {
                 tab.customView = DataGenerator.getTabView(context.applicationContext, 0)
-                tab.customView?.findViewById<RelativeLayout>(R.id.rl_tips)?.visibility = View.VISIBLE
-                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.RED)
+                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLUE)
                 tabList.add(0, tab)
             }else{
                 tab.customView = DataGenerator.getTabView(context.applicationContext, 1)
-                tab.customView?.findViewById<RelativeLayout>(R.id.rl_tips)?.visibility = View.GONE
-                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.parseColor("#333333"))
+                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
                 tabList.add(1, tab)
             }
         }
@@ -103,10 +102,8 @@ class ChatViewPager : Fragment(){
      */
     private fun recoverItem() {
         for (i in 0..1){
-            var text1 = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
-            var rlTips = tabLayout?.getTabAt(i)?.view?.findViewById<RelativeLayout>(R.id.rl_tips)
-            var textTips = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.text_tips)
-            text1?.setTextColor(Color.BLACK)
+            val title = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
+            title?.setTextColor(Color.BLACK)
         }
     }
 
@@ -114,10 +111,38 @@ class ChatViewPager : Fragment(){
      * 选中状态
      */
     private fun chooseTab(tab: TabLayout.Tab?) {
-        var text1 = tab?.view?.findViewById<TextView>(R.id.title)
-        var rlTips = tab?.view?.findViewById<RelativeLayout>(R.id.rl_tips)
-        var textTips = tab?.view?.findViewById<TextView>(R.id.text_tips)
-        rlTips?.visibility = View.VISIBLE
-        text1?.setTextColor(Color.RED)
+        val title = tab?.view?.findViewById<TextView>(R.id.title)
+        title?.setTextColor(Color.BLUE)
+    }
+
+    override fun onMessageReceived(messages: MutableList<EMMessage>?) {
+        LiveDataBus.get().with("key")
+            .postValue("receiveMsg")
+
+    }
+
+    override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
+    }
+
+    override fun onMessageRead(messages: MutableList<EMMessage>?) {
+    }
+
+    override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
+    }
+
+    override fun onMessageRecalled(messages: MutableList<EMMessage>?) {
+    }
+
+    override fun onMessageChanged(message: EMMessage?, change: Any?) {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        EMClient.getInstance().chatManager().addMessageListener(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EMClient.getInstance().chatManager().removeMessageListener(this)
     }
 }
