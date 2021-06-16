@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    >
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:textColor="#ff333333"
+        android:text="聊天"
+        android:textSize="16sp"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_tips"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:gravity="center"
+        android:layout_marginTop="9dp"
+        android:layout_toEndOf="@id/title">
+        <ImageView
+            android:id="@+id/iv_tips"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"/>
+        <TextView
+            android:id="@+id/text_tips"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="8sp"/>
+    </RelativeLayout>
+</RelativeLayout>

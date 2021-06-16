@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@color/gray_light"
+    >
+
+        <EditText
+            android:id="@+id/et_msg_content"
+            android:layout_below="@+id/face_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textSize="14sp"
+            android:imeOptions="flagNoExtractUi"
+            android:hint="请输入内容..."
+            android:background="@null"
+            android:scrollbars="vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_toStartOf="@+id/btn_send"
+            />
+
+        <TextView
+            android:id="@+id/btn_send"
+            android:layout_alignBottom="@+id/et_msg_content"
+            android:text="发送"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/input_send_btn_unenable"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_alignParentEnd="true"
+            />
+
+    <FrameLayout
+        android:id="@+id/face_view"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="10dp"
+        >
+    <ImageView
+        android:id="@+id/iv_face"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/emoji_normal"
+        />
+    <ImageView
+        android:id="@+id/iv_keyboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/keyboard_normal"
+        android:visibility="gone"
+        />
+    </FrameLayout>
+    <ImageView
+        android:id="@+id/iv_picture"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/icon_pic"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/face_view"
+        />
+
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/icon_search"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/iv_picture"
+        />
+
+
+
+</RelativeLayout>

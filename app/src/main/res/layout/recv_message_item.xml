@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/margin_normal"
+    >
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:src="@mipmap/ic_launcher_round"
+        />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/iv_avatar"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:textSize="12sp"
+        android:text="昵称"
+        android:gravity="center"
+        android:lines="1"
+        android:layout_alignBottom="@+id/iv_avatar"
+        android:ellipsize="end"
+        />
+
+    <TextView
+        android:id="@+id/tv_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tv_name"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:textSize="10sp"
+        android:text="老师"
+        android:gravity="center"
+        android:textColor="@color/gray"
+        android:background="@drawable/role_bg"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_alignBottom="@+id/iv_avatar"
+        />
+
+    <TextView
+        android:id="@+id/tv_mute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tv_role"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:textSize="10sp"
+        android:text="禁言"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/blue_round_bg"
+        android:layout_alignBottom="@+id/iv_avatar"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_avatar"
+        android:textSize="16sp"
+        android:text="消息"
+        android:padding="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:background="@drawable/recv_msg_bg"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_toEndOf="@+id/tv_content"
+        android:layout_alignTop="@+id/tv_content"
+        android:layout_marginEnd="5dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+    <ImageView
+        android:id="@+id/resend"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@+id/tv_content"
+        android:layout_alignTop="@+id/tv_content"
+        android:src="@mipmap/warning"
+        android:visibility="invisible"
+        />
+
+</RelativeLayout>

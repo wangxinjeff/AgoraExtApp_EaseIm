@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/frame_title"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_margin="5dp"
+        >
+        <LinearLayout
+            android:id="@+id/announcement_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/announcement_bg"
+            android:paddingStart="5dp"
+            android:gravity="center_horizontal"
+            >
+            <ImageView
+                android:src="@mipmap/icon_announcement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_announcement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:lines="1"
+                android:ellipsize="end"
+                android:textSize="14sp"
+                android:text="公告此处是公告公告此处是公告公告此处是公告公告此处是公告"
+                />
+        </LinearLayout>
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:paddingStart="5dp"
+            android:hint="请输入搜索内容"
+            android:background="@drawable/search_bar_bg"
+            android:textSize="12sp"
+            android:lines="1"
+            android:imeOptions="actionSearch"
+            tools:ignore="RtlSymmetry"
+            android:visibility="gone"
+            />
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/frame_title"
+        android:layout_above="@+id/input_view"
+        android:padding="5dp"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frame_title"
+        android:padding="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:visibility="gone"
+        />
+
+    <com.hyphenate.kotlineaseim.view.ui.widget.InputMsgView
+        android:id="@+id/input_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>
