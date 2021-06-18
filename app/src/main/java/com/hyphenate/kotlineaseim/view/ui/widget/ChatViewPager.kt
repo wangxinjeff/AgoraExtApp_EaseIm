@@ -69,14 +69,22 @@ class ChatViewPager : Fragment(), EMMessageListener{
         viewPager2.adapter = viewPagerAdapter
         tabLayout = view.findViewById(R.id.tab_layout)
         val tabLayoutMediator = TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
-            if(position == 0) {
-                tab.customView = DataGenerator.getTabView(context.applicationContext, 0)
-                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLUE)
-                tabList.add(0, tab)
-            }else{
-                tab.customView = DataGenerator.getTabView(context.applicationContext, 1)
-                tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
-                tabList.add(1, tab)
+            when(position){
+                0 -> {
+                    tab.customView = DataGenerator.getTabView(context.applicationContext, 0)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLUE)
+                    tabList.add(0, tab)
+                }
+                1 -> {
+                    tab.customView = DataGenerator.getTabView(context.applicationContext, 1)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
+                    tabList.add(1, tab)
+                }
+                else -> {
+                    tab.customView = DataGenerator.getTabView(context.applicationContext, 2)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
+                    tabList.add(2, tab)
+                }
             }
         }
         recoverItem()
@@ -101,7 +109,7 @@ class ChatViewPager : Fragment(), EMMessageListener{
      * 重置状态
      */
     private fun recoverItem() {
-        for (i in 0..1){
+        for (i in 0..2){
             val title = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
             title?.setTextColor(Color.BLACK)
         }

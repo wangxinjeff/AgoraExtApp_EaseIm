@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    >
+    android:layout_height="50dp">
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:layout_centerInParent="true"
-        android:textColor="@color/black"
+        android:gravity="center"
         android:text="聊天"
-        android:textSize="16sp"/>
-        <ImageView
-            android:id="@+id/iv_tips"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:gravity="center"
-            android:layout_marginTop="9dp"
-            android:visibility="gone"
-            android:layout_toEndOf="@id/title"
-            android:scaleType="centerInside"
-            android:src="@mipmap/icon_unread"
-            />
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_tips"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="9dp"
+        android:layout_toEndOf="@id/title"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@mipmap/icon_unread"
+        android:visibility="gone" />
 </RelativeLayout>

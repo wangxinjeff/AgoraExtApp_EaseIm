@@ -11,6 +11,8 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
@@ -271,5 +273,4 @@ object CommonUtil {
         info[4] = m.scaledDensity
         return info
     }
-
 }

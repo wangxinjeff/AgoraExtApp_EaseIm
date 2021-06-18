@@ -5,6 +5,8 @@ import com.hyphenate.EMCallBack
 import com.hyphenate.EMValueCallBack
 import com.hyphenate.chat.EMChatRoom
 import com.hyphenate.chat.EMClient
+import com.hyphenate.chat.EMConversation
+import com.hyphenate.chat.EMMessage
 
 class EaseRepository {
 
@@ -46,5 +48,11 @@ class EaseRepository {
             }
 
         })
+    }
+
+    fun easeLoadMessages(conversationId: String, data: MutableLiveData<List<EMMessage>>){
+        val conversation = EMClient.getInstance().chatManager().getConversation(conversationId, EMConversation.EMConversationType.ChatRoom, true)
+        val msgList = conversation.allMessages
+        data.postValue(msgList)
     }
 }

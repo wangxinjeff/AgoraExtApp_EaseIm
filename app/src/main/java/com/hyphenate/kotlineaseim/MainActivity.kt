@@ -1,7 +1,6 @@
 package com.hyphenate.kotlineaseim
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -13,8 +12,7 @@ import com.hyphenate.kotlineaseim.permission.PermissionsManager
 import com.hyphenate.kotlineaseim.permission.PermissionsResultAction
 import com.hyphenate.kotlineaseim.utils.ScreenUtil
 import com.hyphenate.kotlineaseim.view.ui.widget.ChatViewPager
-import com.hyphenate.kotlineaseim.viewmodel.TestViewModel
-import com.hyphenate.util.EMLog
+import com.hyphenate.kotlineaseim.viewmodel.LoginViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,11 +33,11 @@ class MainActivity : AppCompatActivity() {
                 ScreenUtil.instance.init(this)
                 ScreenUtil.instance.screenWidth = container.width
                 ScreenUtil.instance.screenHeight = container.height
-                val testViewmodel: TestViewModel =
-                    ViewModelProvider(this).get(TestViewModel::class.java)
-                testViewmodel.testObservable.observe(this, {
+                val loginViewmodel: LoginViewModel =
+                    ViewModelProvider(this).get(LoginViewModel::class.java)
+                loginViewmodel.testObservable.observe(this, {
                     if (it["errorCode"].equals("0"))
-                        testViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
+                        loginViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
                     else
                         runOnUiThread(Runnable {
                             Toast.makeText(
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                             ).show()
                         })
                 })
-                testViewmodel.joinObservable.observe(this, {
+                loginViewmodel.joinObservable.observe(this, {
                     runOnUiThread(Runnable {
                         if (it["errorCode"].equals("0"))
                             Toast.makeText(this@MainActivity, "Join Success!!!", Toast.LENGTH_SHORT)
@@ -68,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 //            Log.e("loginObservable:", it.toString())
 //        })
 //
-                testViewmodel.login("easemob", "1")
+                loginViewmodel.login("easemob", "1")
             }
 
 

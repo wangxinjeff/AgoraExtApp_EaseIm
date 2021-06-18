@@ -1,14 +1,18 @@
 package com.hyphenate.kotlineaseim.view.ui.widget
 
+import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import com.hyphenate.kotlineaseim.R
 import com.hyphenate.kotlineaseim.view.`interface`.InputMsgListener
 
@@ -17,17 +21,20 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
     constructor(context: Context) : this(context, null, 0)
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
-    lateinit var msgContent: EditText
+    private lateinit var msgContent: EditText
     lateinit var faceIcon: ImageView
     lateinit var keyboardIcon: ImageView
     lateinit var faceView: FrameLayout
     lateinit var pictureIcon: ImageView
     lateinit var sendBtn: TextView
-    lateinit var listener: InputMsgListener
+    private var listener: InputMsgListener? = null
     lateinit var searchIcon: ImageView
+    private val activity: Activity = context as Activity
+    private val inputManager: InputMethodManager =
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
     init {
-        LayoutInflater.from(getContext()).inflate(R.layout.input_message_view, this)
+        LayoutInflater.from(context).inflate(R.layout.input_message_view, this)
         initViews()
     }
 
@@ -76,23 +83,41 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
                 }
             }
         )
+        msgContent.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                event != null && KeyEvent.KEYCODE_ENTER ==
+                event.keyCode && KeyEvent.ACTION_DOWN == event.action
+            ) {
+                listener?.onSendClick(msgContent.text.toString())
+                msgContent.text.clear()
+                hideSoftKeyboard(msgContent)
+                true
+            } else
+                false
+        })
+
+        msgContent.setOnFocusChangeListener { v, hasFocus ->
+            listener?.onFocusChange(hasFocus)
+        }
     }
 
     override fun onClick(view: View?) {
         if (view != null) {
             when (view.id) {
-                R.id.et_msg_content -> listener.onEditTextClick()
+                R.id.et_msg_content -> listener?.onEditTextClick()
                 R.id.face_view -> {
                     faceIcon.visibility = if (faceIcon.visibility == VISIBLE) GONE else VISIBLE
                     keyboardIcon.visibility = if (faceIcon.visibility == VISIBLE) GONE else VISIBLE
-                    listener.onFaceClick(faceIcon.visibility == VISIBLE)
+                    listener?.onFaceClick(faceIcon.visibility == VISIBLE)
                 }
-                R.id.iv_picture -> listener.onPictureClick()
+                R.id.iv_picture -> listener?.onPictureClick()
                 R.id.btn_send -> {
-                    listener.onSendClick(msgContent.text.toString())
+                    listener?.onSendClick(msgContent.text.toString())
                     msgContent.text.clear()
+                    hideSoftKeyboard(msgContent)
                 }
-                R.id.iv_search -> listener.onSearchClick()
+                R.id.iv_search -> listener?.onSearchClick()
             }
         }
     }
@@ -101,5 +126,27 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
         this.listener = listener
     }
 
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftKeyboard(et: EditText) {
+        et.requestFocus()
+        if (activity.window.attributes.softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (activity.currentFocus != null)
+                inputManager.hideSoftInputFromWindow(
+                    activity.currentFocus!!.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+        }
+        et.clearFocus()
+    }
+
+    /**
+     * 显示软键盘
+     */
+    fun showSoftKeyboard(et: EditText) {
+        et.requestFocus()
+        inputManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
+    }
 
 }

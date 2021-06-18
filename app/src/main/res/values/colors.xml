@@ -12,5 +12,5 @@
     <color name="gray">#BDBDBD</color>
     <color name="gray_light">#F2F2F2</color>
     <color name="blue">#0040FF</color>
-    <color name="announcement_bg">#CEE3F6</color>
+    <color name="normal_bg">#CEE3F6</color>
 </resources>

@@ -6,9 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.hyphenate.kotlineaseim.repositories.EaseRepository
 
-private const val TAG = "TestViewModel"
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-class TestViewModel(application: Application) : AndroidViewModel(application) {
+    companion object{
+        const val TAG = "TestViewModel"
+    }
 
     val testObservable = MutableLiveData<Map<String, String>>()
     val joinObservable = MutableLiveData<Map<String, String>>()

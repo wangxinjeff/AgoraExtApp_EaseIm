@@ -14,7 +14,7 @@
             android:id="@+id/announcement_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/announcement_bg"
+            android:background="@color/normal_bg"
             android:paddingStart="5dp"
             android:gravity="center_horizontal"
             >
@@ -42,7 +42,7 @@
             android:background="@drawable/search_bar_bg"
             android:textSize="12sp"
             android:lines="1"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionSearch|flagNoExtractUi"
             tools:ignore="RtlSymmetry"
             android:visibility="gone"
             />
