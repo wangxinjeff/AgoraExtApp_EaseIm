@@ -15,9 +15,10 @@ import com.hyphenate.util.EMLog
 
 abstract class ChatRowViewHolder(
     private val view: View,
-    private val itemClickListener: MessageListItemClickListener
+    private val itemClickListener: MessageListItemClickListener,
+    private val fragmentNum: Int
 ) : RecyclerView.ViewHolder(view) {
-    companion object{
+    companion object {
         const val TAG = "ChatRowViewHolder"
     }
 
@@ -33,24 +34,34 @@ abstract class ChatRowViewHolder(
     private val callback = ChatCallback()
 
 
-    open fun setUpView(message: EMMessage){
+    open fun setUpView(message: EMMessage) {
         this.message = message
+        when(fragmentNum) {
+            0 -> {
+                avatar?.visibility = View.VISIBLE
+                mute?.visibility = View.VISIBLE
+            }
+            1 -> {
+                avatar?.visibility = View.GONE
+                mute?.visibility = View.GONE
+            }
+        }
         onSetUpView()
         setListener()
         handleMessage()
     }
 
-    open fun setUpView(){
+    open fun setUpView() {
         onSetUpView()
     }
 
     abstract fun onSetUpView()
 
-    private fun setListener(){
+    private fun setListener() {
         reSend?.setOnClickListener {
             itemClickListener.onResendClick(message)
         }
-        recall?.setOnClickListener{
+        recall?.setOnClickListener {
             itemClickListener.onRecallClick(message)
         }
         mute?.setOnClickListener {
@@ -59,10 +70,10 @@ abstract class ChatRowViewHolder(
 
     }
 
-    private fun handleMessage(){
+    private fun handleMessage() {
         message.setMessageStatusCallback(callback)
         mainThreadHandler.post {
-            when(message.status()){
+            when (message.status()) {
                 EMMessage.Status.CREATE -> onMessageCreate()
                 EMMessage.Status.SUCCESS -> onMessageSuccess()
                 EMMessage.Status.INPROGRESS -> onMessageInProgress()
@@ -72,7 +83,7 @@ abstract class ChatRowViewHolder(
         }
     }
 
-    inner class ChatCallback: EMCallBack{
+    inner class ChatCallback : EMCallBack {
         override fun onSuccess() {
             mainThreadHandler.post {
                 onMessageSuccess()
@@ -96,23 +107,23 @@ abstract class ChatRowViewHolder(
 
     }
 
-    private fun onMessageCreate(){
+    private fun onMessageCreate() {
         setStatus(View.VISIBLE, View.GONE)
     }
 
-    open fun onMessageSuccess(){
+    open fun onMessageSuccess() {
         setStatus(View.GONE, View.GONE)
     }
 
-    fun onMessageError(){
+    fun onMessageError() {
         setStatus(View.GONE, View.VISIBLE)
     }
 
-    open fun onMessageInProgress(){
+    open fun onMessageInProgress() {
         setStatus(View.VISIBLE, View.GONE)
     }
 
-    private fun setStatus(progressVisible: Int, reSendVisible: Int){
+    private fun setStatus(progressVisible: Int, reSendVisible: Int) {
         proBar?.visibility = progressVisible
         reSend?.visibility = reSendVisible
     }

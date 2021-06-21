@@ -46,20 +46,16 @@ import com.hyphenate.util.UriUtils
 import com.hyphenate.util.VersionUtils
 import java.io.File
 
-class ChatFragment : Fragment(), InputMsgListener {
+class ChatFragment : BaseFragment() {
     //伴生对象
     companion object {
         const val TAG = "ChatFragment"
-        const val REQUEST_CODE_CAMERA = 1
-        const val REQUEST_CODE_LOCAL = 2
     }
 
     lateinit var searchBar: EditText
     private lateinit var recyclerView: RecyclerView
-    lateinit var cameraFile: File
     lateinit var inputMsgView: InputMsgView
-    private lateinit var context: Activity
-    private val adapter = MessageAdapter()
+    private val adapter = MessageAdapter(EaseConstant.FRAGMENT_CHAT)
     lateinit var announcementView: LinearLayout
     private val softInputUtil = SoftInputUtil()
 
@@ -80,7 +76,7 @@ class ChatFragment : Fragment(), InputMsgListener {
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun initView(view: View) {
         inputMsgView = view.findViewById(R.id.input_view)
         recyclerView = view.findViewById(R.id.rv_list)
         searchBar = view.findViewById(R.id.search_bar)
@@ -89,12 +85,9 @@ class ChatFragment : Fragment(), InputMsgListener {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         chatViewmodel = ViewModelProvider(this).get(ChatViewModel::class.java)
-
-        initListener()
-        chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
     }
 
-    private fun initListener() {
+    override fun initListener() {
         inputMsgView.addInputMsgListener(this)
         adapter.setMessageListItemClickListener(object : MessageListItemClickListener {
             override fun onResendClick(message: EMMessage): Boolean {
@@ -165,6 +158,10 @@ class ChatFragment : Fragment(), InputMsgListener {
         }
     }
 
+    override fun initData() {
+        chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
+    }
+
     override fun onEditTextClick() {
         if(searchBar.isVisible) {
             searchBar.visibility = View.GONE
@@ -174,33 +171,7 @@ class ChatFragment : Fragment(), InputMsgListener {
     }
 
     override fun onFaceClick(isVisible: Boolean) {
-        Log.e(ChatViewPager.TAG, "onFaceClick:$isVisible")
-    }
-
-    override fun onPictureClick() {
-        Log.e(ChatViewPager.TAG, "onPictureClick")
-        val dialog = ChatDialogFragment()
-        dialog.onDialogItemClickListener = object : OnDialogItemClickListener {
-            override fun onItemClick(view: View, position: Int) {
-                when (position) {
-                    0 -> selectPicFromLocal()
-                    1 -> selectPicFromCamera()
-                }
-            }
-        }
-        val transaction: FragmentTransaction =
-            parentFragmentManager.beginTransaction().setTransition(
-                FragmentTransaction.TRANSIT_FRAGMENT_FADE
-            )
-        dialog.show(transaction, null)
-    }
-
-    override fun onSendClick(msgContent: String) {
-        Log.e(ChatViewPager.TAG, "onSendClick:$msgContent")
-        if (msgContent.isNotEmpty()) {
-            val message = EMMessage.createTxtSendMessage(msgContent, EaseConstant.CHATROOM_ID);
-            sendMessage(message)
-        }
+        Log.e(TAG, "onFaceClick:$isVisible")
     }
 
     override fun onSearchClick() {
@@ -230,97 +201,13 @@ class ChatFragment : Fragment(), InputMsgListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_CAMERA -> onActivityResultForCamera()
-                REQUEST_CODE_LOCAL -> data?.let { onActivityResultForLocalPhotos(it) }
-            }
-        }
-    }
-
-    /**
-     * 选择相机拍摄
-     */
-    fun selectPicFromCamera() {
-        if (!CommonUtil.isSdcardExist())
-            return
-        cameraFile = File(
-            PathUtil.getInstance().imagePath,
-            EMClient.getInstance().currentUser + System.currentTimeMillis() + ".jpg"
-        )
-        cameraFile.parentFile?.mkdirs()
-        startActivityForResult(
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
-                MediaStore.EXTRA_OUTPUT,
-                CommonUtil.getUriForFile(context, cameraFile)
-            ), REQUEST_CODE_CAMERA
-        )
-    }
-
-    /**
-     * 选择本地相册
-     */
-    fun selectPicFromLocal() {
-        val intent: Intent?
-        if (VersionUtils.isTargetQ(context)) {
-            intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-        } else {
-            if (Build.VERSION.SDK_INT < 19) {
-                intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-            } else {
-                intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            }
-        }
-        intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_CODE_LOCAL)
-    }
-
-    /***
-     * 处理相机拍摄
-     */
-    private fun onActivityResultForCamera() {
-        if (cameraFile.exists()) {
-            EMLog.e(ChatViewPager.TAG, Uri.parse(cameraFile.absolutePath).toString())
-            val message = EMMessage.createImageSendMessage(
-                Uri.parse(cameraFile.absolutePath),
-                false,
-                EaseConstant.CHATROOM_ID
-            )
-            sendMessage(message)
-        }
-    }
-
-    /**
-     * 处理相册选择
-     */
-    private fun onActivityResultForLocalPhotos(data: Intent) {
-        data.data?.let {
-            val filePath = UriUtils.getFilePath(context, it)
-            if (!TextUtils.isEmpty(filePath) && File(filePath).exists()) {
-                EMLog.e(ChatViewPager.TAG, Uri.parse(filePath).toString())
-                val message = EMMessage.createImageSendMessage(
-                    Uri.parse(filePath),
-                    false,
-                    EaseConstant.CHATROOM_ID
-                )
-                sendMessage(message)
-            } else {
-                EMLog.e(ChatViewPager.TAG, it.toString())
-                val message =
-                    EMMessage.createImageSendMessage(data.data, false, EaseConstant.CHATROOM_ID)
-                sendMessage(message)
-            }
-        }
+    override fun addExt(message: EMMessage) {
     }
 
     /***
      * 发送消息
      */
-    private fun sendMessage(message: EMMessage) {
+    override fun sendMessage(message: EMMessage) {
         message.chatType = EMMessage.ChatType.ChatRoom
         EMClient.getInstance().chatManager().sendMessage(message)
         chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)

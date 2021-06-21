@@ -8,8 +8,8 @@ import com.hyphenate.kotlineaseim.R
 import com.hyphenate.kotlineaseim.view.`interface`.MessageListItemClickListener
 
 class TextViewHolder(view: View,
-                     itemClickListener: MessageListItemClickListener
-) : ChatRowViewHolder(view, itemClickListener) {
+                     itemClickListener: MessageListItemClickListener, fragmentNum: Int
+) : ChatRowViewHolder(view, itemClickListener, fragmentNum) {
     val content: TextView = itemView.findViewById(R.id.tv_content)
     override fun onSetUpView() {
         val body = message.body as EMTextMessageBody

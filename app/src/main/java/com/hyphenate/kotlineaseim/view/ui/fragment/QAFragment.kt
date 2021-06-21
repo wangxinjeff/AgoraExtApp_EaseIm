@@ -1,6 +1,9 @@
 package com.hyphenate.kotlineaseim.view.ui.fragment
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +12,38 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.hyphenate.chat.EMClient
+import com.hyphenate.chat.EMMessage
 import com.hyphenate.kotlineaseim.R
+import com.hyphenate.kotlineaseim.constant.EaseConstant
+import com.hyphenate.kotlineaseim.livedatas.LiveDataBus
 import com.hyphenate.kotlineaseim.utils.SoftInputUtil
 import com.hyphenate.kotlineaseim.view.`interface`.InputMsgListener
+import com.hyphenate.kotlineaseim.view.`interface`.MessageListItemClickListener
+import com.hyphenate.kotlineaseim.view.adapter.MessageAdapter
+import com.hyphenate.kotlineaseim.view.ui.widget.ChatViewPager
 import com.hyphenate.kotlineaseim.view.ui.widget.InputMsgView
+import com.hyphenate.kotlineaseim.viewmodel.ChatViewModel
+import com.hyphenate.util.EMLog
+import java.io.File
 
-class QAFragment : Fragment(), InputMsgListener {
+class QAFragment : BaseFragment() {
+
+    //伴生对象
+    companion object {
+        const val TAG = "QAFragment"
+    }
 
     lateinit var searchBar: EditText
     lateinit var inputMsgView: InputMsgView
     private val softInputUtil = SoftInputUtil()
+    private lateinit var recyclerView: RecyclerView
+    private val adapter = MessageAdapter(EaseConstant.FRAGMENT_QA)
     var isShowSoft :Boolean = false
+    lateinit var chatViewmodel: ChatViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,14 +53,16 @@ class QAFragment : Fragment(), InputMsgListener {
         return inflater.inflate(R.layout.fragment_qa, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun initView(view: View) {
         inputMsgView = view.findViewById(R.id.input_view)
+        recyclerView = view.findViewById(R.id.rv_list)
         searchBar = view.findViewById(R.id.search_bar)
-
-        initListener()
-
+        val layoutManager = LinearLayoutManager(context.applicationContext)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        chatViewmodel = ViewModelProvider(this).get(ChatViewModel::class.java)
     }
-    private fun initListener(){
+    override fun initListener(){
         inputMsgView.addInputMsgListener(this)
         softInputUtil.attachSoftInput(
             inputMsgView
@@ -60,13 +86,55 @@ class QAFragment : Fragment(), InputMsgListener {
             } else
                 false
         }
+
+        adapter.setMessageListItemClickListener(object : MessageListItemClickListener {
+            override fun onResendClick(message: EMMessage): Boolean {
+                return true
+            }
+
+            override fun onMessageCreate(message: EMMessage) {
+                EMLog.e(TAG, "onMessageCreate")
+            }
+
+            override fun onMessageSuccess(message: EMMessage) {
+                EMLog.e(TAG, "onMessageSuccess")
+            }
+
+            override fun onMessageError(message: EMMessage, code: Int, error: String?) {
+                EMLog.e(TAG, "onMessageError")
+            }
+
+            override fun onMessageInProgress(message: EMMessage, progress: Int) {
+                EMLog.e(TAG, "onMessageInProgress")
+            }
+
+            override fun onRecallClick(message: EMMessage) {
+                EMLog.e(TAG, "onRecallClick")
+            }
+
+            override fun onMuteClick(message: EMMessage) {
+                EMLog.e(TAG, "onMuteClick")
+            }
+        })
+
+        LiveDataBus.get().with("key").observe(viewLifecycleOwner, {
+            when (it.toString()) {
+                "receiveMsg" -> {
+                    chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
+                }
+            }
+        })
+
+        chatViewmodel.chatQAObservable.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                adapter.setData(it)
+                recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+            }
+        })
     }
 
-    //伴生对象
-    companion object{
-        fun newInstance(){
-
-        }
+    override fun initData() {
+        chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
     }
 
     override fun onEditTextClick() {
@@ -76,15 +144,7 @@ class QAFragment : Fragment(), InputMsgListener {
     }
 
     override fun onFaceClick(isVisible: Boolean) {
-
-    }
-
-    override fun onPictureClick() {
-
-    }
-
-    override fun onSendClick(msgContent: String) {
-
+        Log.e(TAG, "onFaceClick:$isVisible")
     }
 
     override fun onSearchClick() {
@@ -109,5 +169,15 @@ class QAFragment : Fragment(), InputMsgListener {
                 searchBar.visibility = View.GONE
             }
         }
+    }
+
+    override fun addExt(message: EMMessage) {
+
+    }
+
+    override fun sendMessage(message: EMMessage) {
+        message.chatType = EMMessage.ChatType.ChatRoom
+        EMClient.getInstance().chatManager().sendMessage(message)
+        chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
     }
 }

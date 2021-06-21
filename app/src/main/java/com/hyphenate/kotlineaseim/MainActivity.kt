@@ -35,27 +35,27 @@ class MainActivity : AppCompatActivity() {
                 ScreenUtil.instance.screenHeight = container.height
                 val loginViewmodel: LoginViewModel =
                     ViewModelProvider(this).get(LoginViewModel::class.java)
-                loginViewmodel.testObservable.observe(this, {
-                    if (it["errorCode"].equals("0"))
+                loginViewmodel.testObservable.observe(this, { result ->
+                    if (result["errorCode"].equals("0"))
                         loginViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
                     else
                         runOnUiThread(Runnable {
                             Toast.makeText(
                                 this@MainActivity,
-                                "Login Failed:" + it["errorMsg"],
+                                "Login Failed:" + result["errorMsg"],
                                 Toast.LENGTH_SHORT
                             ).show()
                         })
                 })
-                loginViewmodel.joinObservable.observe(this, {
+                loginViewmodel.joinObservable.observe(this, { result ->
                     runOnUiThread(Runnable {
-                        if (it["errorCode"].equals("0"))
+                        if (result["errorCode"].equals("0"))
                             Toast.makeText(this@MainActivity, "Join Success!!!", Toast.LENGTH_SHORT)
                                 .show()
                         else
                             Toast.makeText(
                                 this@MainActivity,
-                                "Join Failed:" + it["errorMsg"],
+                                "Join Failed:" + result["errorMsg"],
                                 Toast.LENGTH_SHORT
                             ).show()
                     })

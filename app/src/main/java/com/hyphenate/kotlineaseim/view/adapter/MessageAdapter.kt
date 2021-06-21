@@ -13,7 +13,7 @@ import com.hyphenate.kotlineaseim.view.viewholder.ChatRowViewHolder
 import com.hyphenate.kotlineaseim.view.viewholder.ImageViewHolder
 import com.hyphenate.kotlineaseim.view.viewholder.TextViewHolder
 
-class MessageAdapter : RecyclerView.Adapter<ChatRowViewHolder>() {
+class MessageAdapter(private val fragmentNum: Int) : RecyclerView.Adapter<ChatRowViewHolder>() {
 
     companion object {
         const val DIRECT_TXT_SEND: Int = 1
@@ -65,23 +65,23 @@ class MessageAdapter : RecyclerView.Adapter<ChatRowViewHolder>() {
         return when (viewType) {
             DIRECT_TXT_SEND -> TextViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.send_message_item, parent, false), itemClickListener
+                    .inflate(R.layout.send_message_item, parent, false), itemClickListener, fragmentNum
             )
             DIRECT_TXT_REC -> TextViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.recv_message_item, parent, false), itemClickListener
+                    .inflate(R.layout.recv_message_item, parent, false), itemClickListener, fragmentNum
             )
             DIRECT_IMG_SEND -> ImageViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.send_img_message_item, parent, false), itemClickListener
+                    .inflate(R.layout.send_img_message_item, parent, false), itemClickListener, fragmentNum
             )
             DIRECT_IMG_REC -> ImageViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.recv_img_message_item, parent, false), itemClickListener
+                    .inflate(R.layout.recv_img_message_item, parent, false), itemClickListener, fragmentNum
             )
             else -> TextViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.send_message_item, parent, false), itemClickListener
+                    .inflate(R.layout.send_message_item, parent, false), itemClickListener, fragmentNum
             )
         }
     }

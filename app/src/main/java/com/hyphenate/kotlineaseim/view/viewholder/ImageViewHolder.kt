@@ -7,8 +7,8 @@ import com.hyphenate.kotlineaseim.utils.CommonUtil
 import com.hyphenate.kotlineaseim.view.`interface`.MessageListItemClickListener
 
 class ImageViewHolder(val view: View,
-                      itemClickListener: MessageListItemClickListener
-) : ChatRowViewHolder(view, itemClickListener) {
+                      itemClickListener: MessageListItemClickListener, fragmentNum: Int
+) : ChatRowViewHolder(view, itemClickListener, fragmentNum) {
     private val img: ImageView = itemView.findViewById(R.id.iv_img)
     override fun onSetUpView() {
         CommonUtil.showImage(view.context.applicationContext, img, message)

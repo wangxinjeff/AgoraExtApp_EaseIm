@@ -13,6 +13,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         const val TAG = "ChatViewModel"
     }
     val chatObservable = MutableLiveData<List<EMMessage>>()
+    val chatQAObservable = MutableLiveData<List<EMMessage>>()
 
     private val easeRepository = EaseRepository()
 
@@ -27,6 +28,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadMessages(conversationId: String){
         easeRepository.easeLoadMessages(conversationId, chatObservable)
+
+    }
+
+    fun loadQAMessages(conversationId: String){
+        easeRepository.easeLoadMessages(conversationId, chatQAObservable)
 
     }
 
