@@ -1,6 +1,8 @@
 package com.hyphenate.kotlineaseim
 
+import android.app.ProgressDialog
 import android.os.Bundle
+import android.os.Handler
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -13,9 +15,13 @@ import com.hyphenate.kotlineaseim.permission.PermissionsResultAction
 import com.hyphenate.kotlineaseim.utils.ScreenUtil
 import com.hyphenate.kotlineaseim.view.ui.widget.ChatViewPager
 import com.hyphenate.kotlineaseim.viewmodel.LoginViewModel
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
+    private var dialog: ProgressDialog? = null
+    private var dialogCreateTime by Delegates.notNull<Long>()
+    private lateinit var handler: Handler
     companion object {
         const val TAG = "MainActivity"
     }
@@ -26,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.main_activity)
         requestPermissions()
+        handler = Handler(this.mainLooper)
         if (EaseIM.getInstance().init(this)) {
             val container = findViewById<FrameLayout>(R.id.fragment_container)
             //测量视图宽高
@@ -39,16 +46,18 @@ class MainActivity : AppCompatActivity() {
                     if (result["errorCode"].equals("0"))
                         loginViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
                     else
-                        runOnUiThread(Runnable {
+                        runOnUiThread {
+                            dismissLoading()
                             Toast.makeText(
                                 this@MainActivity,
                                 "Login Failed:" + result["errorMsg"],
                                 Toast.LENGTH_SHORT
                             ).show()
-                        })
+                        }
                 })
                 loginViewmodel.joinObservable.observe(this, { result ->
-                    runOnUiThread(Runnable {
+                    runOnUiThread {
+                        dismissLoading()
                         if (result["errorCode"].equals("0"))
                             Toast.makeText(this@MainActivity, "Join Success!!!", Toast.LENGTH_SHORT)
                                 .show()
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                                 "Join Failed:" + result["errorMsg"],
                                 Toast.LENGTH_SHORT
                             ).show()
-                    })
+                    }
                 })
 
 
@@ -67,6 +76,7 @@ class MainActivity : AppCompatActivity() {
 //        })
 //
                 loginViewmodel.login("easemob", "1")
+                showLoading()
             }
 
 
@@ -87,5 +97,31 @@ class MainActivity : AppCompatActivity() {
 
                 }
             })
+    }
+
+    private fun showLoading(){
+        if(dialog?.isShowing == true)
+            dialog?.dismiss()
+        dialogCreateTime = System.currentTimeMillis()
+        dialog = ProgressDialog(this, R.style.Dialog_Light)
+        dialog?.setMessage("加载中")
+        dialog?.setCancelable(false)
+        dialog?.show()
+    }
+
+    private fun dismissLoading(){
+        if(dialog?.isShowing == true){
+            if(System.currentTimeMillis() - dialogCreateTime < 500){
+                handler.postDelayed(Runnable {
+                    if(dialog?.isShowing == true){
+                        dialog?.dismiss()
+                        dialog = null
+                    }
+                }, 1000)
+            }else{
+                dialog?.dismiss()
+                dialog = null
+            }
+        }
     }
 }

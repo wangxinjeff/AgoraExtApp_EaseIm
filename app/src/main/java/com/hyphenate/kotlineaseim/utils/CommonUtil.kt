@@ -60,11 +60,15 @@ object CommonUtil {
         return uri.substring(lastIndex + 1)
     }
 
-    private fun uriStartWithContent(fileUri: Uri): Boolean{
+    private fun uriStartWithContent(fileUri: Uri): Boolean {
         return "content".equals(fileUri.scheme, ignoreCase = true)
     }
 
-    private fun takePersistableUriPermission(context: Context?, fileUri: Uri?, intent: Intent?): Uri? {
+    private fun takePersistableUriPermission(
+        context: Context?,
+        fileUri: Uri?,
+        intent: Intent?
+    ): Uri? {
         if (context == null || fileUri == null) {
             return null
         }
@@ -76,7 +80,8 @@ object CommonUtil {
         if (intent != null) {
             intentFlags = intent.flags
         }
-        val takeFlags = intentFlags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        val takeFlags =
+            intentFlags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         var last = getLastSubFromUri(fileUri)
         if (!TextUtils.isEmpty(last))
             return try {
@@ -99,7 +104,11 @@ object CommonUtil {
 
     }
 
-    fun showImage(context: Context, imageView: ImageView, message: EMMessage): ViewGroup.LayoutParams{
+    fun showImage(
+        context: Context,
+        imageView: ImageView,
+        message: EMMessage
+    ): ViewGroup.LayoutParams {
         val body = message.body as? EMImageMessageBody ?: return imageView.layoutParams
         //获取图片的长和宽
         //获取图片的长和宽
@@ -156,7 +165,7 @@ object CommonUtil {
         return showImage(context, imageView, imageUri, thumbnailUrl, width, height)
     }
 
-    private fun isFileExistByUri(context: Context, fileUri: Uri?): Boolean{
+    private fun isFileExistByUri(context: Context, fileUri: Uri?): Boolean {
         if (fileUri == null) {
             return false
         }
@@ -185,7 +194,7 @@ object CommonUtil {
         imageUrl: String,
         imgWidth: Int,
         imgHeight: Int
-    ): ViewGroup.LayoutParams{
+    ): ViewGroup.LayoutParams {
         val maxSize: IntArray = getImageMaxSize(context)
         val maxWidth = maxSize[0]
         val maxHeight = maxSize[1]
@@ -239,14 +248,14 @@ object CommonUtil {
             return params
         }
         Glide.with(context)
-                .load(imageUri ?: imageUrl)
-                .apply(
-                    RequestOptions()
-                        .error(R.mipmap.ic_launcher)
-                )
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(params.width, params.height)
-                .into(imageView)
+            .load(imageUri ?: imageUrl)
+            .apply(
+                RequestOptions()
+                    .error(R.mipmap.ic_launcher)
+            )
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .override(params.width, params.height)
+            .into(imageView)
         return params
     }
 
@@ -258,7 +267,7 @@ object CommonUtil {
         return maxSize
     }
 
-    private fun getScreenInfo(context: Context): FloatArray{
+    private fun getScreenInfo(context: Context): FloatArray {
 //        val manager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val info = FloatArray(5)
 //        val dm = DisplayMetrics()
@@ -272,5 +281,32 @@ object CommonUtil {
         info[3] = m.density
         info[4] = m.scaledDensity
         return info
+    }
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftKeyboard(activity: Activity, et: EditText) {
+        et.requestFocus()
+        if (activity.window.attributes.softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (activity.currentFocus != null) {
+                val inputManager: InputMethodManager =
+                    activity.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(
+                    activity.currentFocus!!.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+            }
+        }
+        et.clearFocus()
+    }
+
+    /**
+     * 显示软键盘
+     */
+    fun showSoftKeyboard(activity: Activity, et: EditText) {
+        et.requestFocus()
+        val inputManager: InputMethodManager =
+            activity.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
     }
 }

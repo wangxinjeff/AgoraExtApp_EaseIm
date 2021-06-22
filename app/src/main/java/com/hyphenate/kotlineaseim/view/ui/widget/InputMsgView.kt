@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.ContextCompat
 import com.hyphenate.kotlineaseim.R
+import com.hyphenate.kotlineaseim.utils.CommonUtil
 import com.hyphenate.kotlineaseim.view.`interface`.InputMsgListener
 
 class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) :
@@ -21,7 +22,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
     constructor(context: Context) : this(context, null, 0)
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
-    private lateinit var msgContent: EditText
+    lateinit var msgContent: EditText
     lateinit var faceIcon: ImageView
     lateinit var keyboardIcon: ImageView
     lateinit var faceView: FrameLayout
@@ -47,6 +48,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
         sendBtn = findViewById(R.id.btn_send)
         searchIcon = findViewById(R.id.iv_search)
 
+        sendBtn.isEnabled = false
 
         initListener()
     }
@@ -74,6 +76,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
 
                 override fun afterTextChanged(s: Editable?) {
                     if (s != null && s.isNotEmpty()) {
+                        sendBtn.isEnabled = true
                         sendBtn.background =
                             ContextCompat.getDrawable(context, R.drawable.input_send_btn_enable)
                         return
@@ -91,7 +94,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
             ) {
                 listener?.onSendClick(msgContent.text.toString())
                 msgContent.text.clear()
-                hideSoftKeyboard(msgContent)
+                CommonUtil.hideSoftKeyboard(activity, msgContent)
                 true
             } else
                 false
@@ -115,7 +118,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
                 R.id.btn_send -> {
                     listener?.onSendClick(msgContent.text.toString())
                     msgContent.text.clear()
-                    hideSoftKeyboard(msgContent)
+                    CommonUtil.hideSoftKeyboard(activity, msgContent)
                 }
                 R.id.iv_search -> listener?.onSearchClick()
             }
@@ -124,29 +127,6 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
 
     fun addInputMsgListener(listener: InputMsgListener) {
         this.listener = listener
-    }
-
-    /**
-     * 隐藏软键盘
-     */
-    fun hideSoftKeyboard(et: EditText) {
-        et.requestFocus()
-        if (activity.window.attributes.softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (activity.currentFocus != null)
-                inputManager.hideSoftInputFromWindow(
-                    activity.currentFocus!!.windowToken,
-                    InputMethodManager.HIDE_NOT_ALWAYS
-                )
-        }
-        et.clearFocus()
-    }
-
-    /**
-     * 显示软键盘
-     */
-    fun showSoftKeyboard(et: EditText) {
-        et.requestFocus()
-        inputManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
     }
 
 }

@@ -52,28 +52,12 @@ class ChatFragment : BaseFragment() {
         const val TAG = "ChatFragment"
     }
 
-    lateinit var searchBar: EditText
-    private lateinit var recyclerView: RecyclerView
-    lateinit var inputMsgView: InputMsgView
+    private lateinit var inputMsgView: InputMsgView
     private val adapter = MessageAdapter(EaseConstant.FRAGMENT_CHAT)
-    lateinit var announcementView: LinearLayout
-    private val softInputUtil = SoftInputUtil()
+    private lateinit var announcementView: LinearLayout
 
-    lateinit var chatViewmodel: ChatViewModel
-
-    var isShowSoft :Boolean = false
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        this.context = context as Activity
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_chat, container, false)
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_chat
     }
 
     override fun initView(view: View) {
@@ -84,7 +68,6 @@ class ChatFragment : BaseFragment() {
         val layoutManager = LinearLayoutManager(context.applicationContext)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-        chatViewmodel = ViewModelProvider(this).get(ChatViewModel::class.java)
     }
 
     override fun initListener() {
@@ -151,10 +134,14 @@ class ChatFragment : BaseFragment() {
                 event.keyCode && KeyEvent.ACTION_DOWN == event.action
             ) {
                 val searchContent = searchBar.text
-                inputMsgView.hideSoftKeyboard(searchBar)
+                CommonUtil.hideSoftKeyboard(context, searchBar)
                 true
             } else
                 false
+        }
+
+        searchBar.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            EMLog.e(TAG,hasFocus.toString())
         }
     }
 
@@ -164,6 +151,7 @@ class ChatFragment : BaseFragment() {
 
     override fun onEditTextClick() {
         if(searchBar.isVisible) {
+            searchBar.text.clear()
             searchBar.visibility = View.GONE
             announcementView.visibility = View.VISIBLE
         }
@@ -176,8 +164,6 @@ class ChatFragment : BaseFragment() {
 
     override fun onSearchClick() {
         if (searchBar.isVisible) {
-            if(searchBar.isFocused && isShowSoft)
-                inputMsgView.hideSoftKeyboard(searchBar)
             searchBar.text.clear()
             searchBar.visibility = View.GONE
             announcementView.visibility = View.VISIBLE
@@ -185,10 +171,11 @@ class ChatFragment : BaseFragment() {
             inputMsgView.translationY = 0F
             announcementView.visibility = View.GONE
             searchBar.visibility = View.VISIBLE
+            inputMsgView.msgContent.clearFocus()
             if(isShowSoft)
                 searchBar.requestFocus()
             else
-                inputMsgView.showSoftKeyboard(searchBar)
+                CommonUtil.showSoftKeyboard(context, searchBar)
         }
     }
 
@@ -211,5 +198,14 @@ class ChatFragment : BaseFragment() {
         message.chatType = EMMessage.ChatType.ChatRoom
         EMClient.getInstance().chatManager().sendMessage(message)
         chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (searchBar.isVisible) {
+            searchBar.text.clear()
+            searchBar.visibility = View.GONE
+            announcementView.visibility = View.VISIBLE
+        }
     }
 }

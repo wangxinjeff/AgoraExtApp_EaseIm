@@ -9,17 +9,27 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.kotlineaseim.R
 import com.hyphenate.kotlineaseim.constant.EaseConstant
 import com.hyphenate.kotlineaseim.utils.CommonUtil
+import com.hyphenate.kotlineaseim.utils.SoftInputUtil
 import com.hyphenate.kotlineaseim.view.`interface`.InputMsgListener
 import com.hyphenate.kotlineaseim.view.`interface`.OnDialogItemClickListener
+import com.hyphenate.kotlineaseim.view.adapter.MessageAdapter
 import com.hyphenate.kotlineaseim.view.ui.widget.ChatDialogFragment
 import com.hyphenate.kotlineaseim.view.ui.widget.InputMsgView
+import com.hyphenate.kotlineaseim.viewmodel.ChatViewModel
 import com.hyphenate.util.EMLog
 import com.hyphenate.util.PathUtil
 import com.hyphenate.util.UriUtils
@@ -36,14 +46,29 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
 
     lateinit var cameraFile: File
     lateinit var context: Activity
+    lateinit var searchBar: EditText
+    lateinit var recyclerView: RecyclerView
+    lateinit var chatViewmodel: ChatViewModel
+    val softInputUtil = SoftInputUtil()
+
+    var isShowSoft :Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         this.context = context as Activity
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(getLayoutId(), container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        chatViewmodel = ViewModelProvider(this).get(ChatViewModel::class.java)
         initView(view)
         initListener()
     }
@@ -52,6 +77,8 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
         super.onActivityCreated(savedInstanceState)
         initData()
     }
+
+    abstract fun getLayoutId(): Int
 
     abstract fun initView(view: View)
     abstract fun initListener()
@@ -159,7 +186,7 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
     /**
      * 选择本地相册
      */
-    fun selectPicFromLocal() {
+    private fun selectPicFromLocal() {
         val intent: Intent?
         if (VersionUtils.isTargetQ(context)) {
             intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -179,7 +206,7 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
     /**
      * 选择相机拍摄
      */
-    fun selectPicFromCamera() {
+    private fun selectPicFromCamera() {
         if (!CommonUtil.isSdcardExist())
             return
         cameraFile = File(
@@ -198,10 +225,11 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
     /**
      * 设置消息扩展
      */
-    abstract fun addExt(message: EMMessage)
+    open fun addExt(message: EMMessage){}
 
     /**
      * 发送消息
      */
-    abstract fun sendMessage(message: EMMessage)
+    open fun sendMessage(message: EMMessage){}
+
 }

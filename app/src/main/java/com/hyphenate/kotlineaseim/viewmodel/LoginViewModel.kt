@@ -27,12 +27,12 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun login(userName: String, pwd: String){
-        easeRepository.easeLogin(userName, pwd,testObservable)
+        easeRepository.login(userName, pwd,testObservable)
 
     }
 
     fun joinChatRoom(chatRoomId: String){
-        easeRepository.easeJoinRoom(chatRoomId,joinObservable)
+        easeRepository.joinRoom(chatRoomId,joinObservable)
 
     }
 

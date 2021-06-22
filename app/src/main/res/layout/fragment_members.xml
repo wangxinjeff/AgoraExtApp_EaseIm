@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MembersFragment"
-        tools:layout_editor_absoluteX="184dp"
-        tools:layout_editor_absoluteY="314dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:padding="@dimen/margin_normal"
+        >
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:paddingStart="5dp"
+        android:hint="请输入搜索内容"
+        android:background="@drawable/normal_role_bg"
+        android:textSize="12sp"
+        android:lines="1"
+        android:imeOptions="actionSearch|flagNoExtractUi"
+        />
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_members"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

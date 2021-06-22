@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.kotlineaseim.model.User
 import com.hyphenate.kotlineaseim.repositories.EaseRepository
 
 
@@ -14,6 +15,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
     val chatObservable = MutableLiveData<List<EMMessage>>()
     val chatQAObservable = MutableLiveData<List<EMMessage>>()
+    val membersObservable = MutableLiveData<List<User>>()
 
     private val easeRepository = EaseRepository()
 
@@ -27,13 +29,16 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadMessages(conversationId: String){
-        easeRepository.easeLoadMessages(conversationId, chatObservable)
+        easeRepository.loadMessages(conversationId, chatObservable)
 
     }
 
     fun loadQAMessages(conversationId: String){
-        easeRepository.easeLoadMessages(conversationId, chatQAObservable)
+        easeRepository.loadMessages(conversationId, chatQAObservable)
+    }
 
+    fun loadMembers(chatRoomId: String){
+        easeRepository.loadMembers(chatRoomId, membersObservable)
     }
 
 
