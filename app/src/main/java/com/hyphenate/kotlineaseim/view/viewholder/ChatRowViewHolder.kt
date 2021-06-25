@@ -22,7 +22,7 @@ abstract class ChatRowViewHolder(
         const val TAG = "ChatRowViewHolder"
     }
 
-    val avatar: ImageView? = itemView.findViewById(R.id.iv_avatar)
+    private val avatar: ImageView? = itemView.findViewById(R.id.iv_avatar)
     val name: TextView? = itemView.findViewById(R.id.tv_name)
     val role: TextView? = itemView.findViewById(R.id.tv_role)
     private val proBar: ProgressBar? = itemView.findViewById(R.id.progress_bar)
@@ -39,11 +39,11 @@ abstract class ChatRowViewHolder(
         when(fragmentNum) {
             0 -> {
                 avatar?.visibility = View.VISIBLE
-                mute?.visibility = View.VISIBLE
+//                mute?.visibility = View.VISIBLE
             }
             1 -> {
                 avatar?.visibility = View.GONE
-                mute?.visibility = View.GONE
+//                mute?.visibility = View.GONE
             }
         }
         onSetUpView()

@@ -2,22 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_view"
+    >
 
-    <FrameLayout
-        android:id="@+id/frame_title"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        >
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frame_title"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:layout_margin="5dp"-->
+<!--        >-->
         <LinearLayout
             android:id="@+id/announcement_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/normal_bg"
-            android:paddingStart="5dp"
+            android:layout_height="20dp"
+            android:layout_margin="@dimen/margin_normal"
+            android:background="@color/announcement_bg"
+            android:paddingStart="@dimen/padding_normal"
             android:gravity="center_horizontal"
-            >
+            tools:ignore="RtlSymmetry">
             <ImageView
                 android:src="@mipmap/icon_announcement"
                 android:layout_width="wrap_content"
@@ -30,42 +33,42 @@
                 android:lines="1"
                 android:ellipsize="end"
                 android:textSize="14sp"
-                android:text="公告此处是公告公告此处是公告公告此处是公告公告此处是公告"
+                android:text="@string/default_announcement"
                 />
         </LinearLayout>
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:paddingStart="5dp"
-            android:hint="请输入搜索内容"
-            android:background="@drawable/search_bar_bg"
-            android:textSize="12sp"
-            android:lines="1"
-            android:imeOptions="actionSearch|flagNoExtractUi"
-            tools:ignore="RtlSymmetry"
-            android:visibility="gone"
-            />
-    </FrameLayout>
+<!--        <EditText-->
+<!--            android:id="@+id/search_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:paddingStart="5dp"-->
+<!--            android:hint="请输入搜索内容"-->
+<!--            android:background="@drawable/search_bar_bg"-->
+<!--            android:textSize="12sp"-->
+<!--            android:lines="1"-->
+<!--            android:imeOptions="actionSearch|flagNoExtractUi"-->
+<!--            tools:ignore="RtlSymmetry"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+<!--    </FrameLayout>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/frame_title"
+        android:layout_below="@+id/announcement_view"
         android:layout_above="@+id/input_view"
         android:padding="5dp"
         />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/frame_title"
-        android:padding="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:visibility="gone"
-        />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/search_list"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/frame_title"-->
+<!--        android:padding="5dp"-->
+<!--        android:layout_marginStart="5dp"-->
+<!--        android:layout_marginEnd="5dp"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
 
     <com.hyphenate.kotlineaseim.view.ui.widget.InputMsgView
         android:id="@+id/input_view"
@@ -73,5 +76,54 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         />
+
+    <ScrollView
+        android:id="@+id/sv_announcement"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="invisible"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/announcement"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                />
+
+            <TextView
+                android:id="@+id/announcement_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告这里是群公告"
+                />
+
+            <TextView
+                android:id="@+id/btn_announcement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/know"
+                android:theme="@style/mute_bg_style"
+                android:padding="@dimen/padding_normal"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="20dp"
+                />
+
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

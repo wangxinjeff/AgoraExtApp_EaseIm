@@ -11,8 +11,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     companion object{
         const val TAG = "TestViewModel"
     }
-
-    val testObservable = MutableLiveData<Map<String, String>>()
+    val registerObservable = MutableLiveData<Map<String, String>>()
+    val loginObservable = MutableLiveData<Map<String, String>>()
     val joinObservable = MutableLiveData<Map<String, String>>()
 
     private val easeRepository = EaseRepository()
@@ -27,13 +27,17 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun login(userName: String, pwd: String){
-        easeRepository.login(userName, pwd,testObservable)
+        easeRepository.login(userName, pwd,loginObservable)
 
     }
 
     fun joinChatRoom(chatRoomId: String){
         easeRepository.joinRoom(chatRoomId,joinObservable)
 
+    }
+
+    fun createUser(userName: String, pwd: String){
+        easeRepository.createUser(userName, pwd, registerObservable)
     }
 
 }

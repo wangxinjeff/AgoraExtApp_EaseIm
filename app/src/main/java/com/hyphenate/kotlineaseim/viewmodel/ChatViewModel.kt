@@ -16,6 +16,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     val chatObservable = MutableLiveData<List<EMMessage>>()
     val chatQAObservable = MutableLiveData<List<EMMessage>>()
     val membersObservable = MutableLiveData<List<User>>()
+    val announcementObservable = MutableLiveData<String>()
 
     private val easeRepository = EaseRepository()
 
@@ -34,11 +35,15 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadQAMessages(conversationId: String){
-        easeRepository.loadMessages(conversationId, chatQAObservable)
+        easeRepository.loadQAMessages(conversationId, chatQAObservable)
     }
 
     fun loadMembers(chatRoomId: String){
         easeRepository.loadMembers(chatRoomId, membersObservable)
+    }
+
+    fun fetchAnnouncement(chatRoomId: String){
+        easeRepository.fetchAnnouncement(chatRoomId, announcementObservable)
     }
 
 

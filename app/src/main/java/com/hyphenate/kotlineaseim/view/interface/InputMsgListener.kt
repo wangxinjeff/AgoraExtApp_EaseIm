@@ -25,10 +25,10 @@ interface InputMsgListener {
     /**
      * 搜索点击
      */
-    fun onSearchClick()
+//    fun onSearchClick()
 
     /**
-     * 搜索点击
+     * 输入框焦点改变
      */
     fun onFocusChange(hasFocus: Boolean)
 

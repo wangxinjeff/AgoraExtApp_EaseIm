@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.hyphenate.EMError
 import com.hyphenate.kotlineaseim.constant.EaseConstant
 import com.hyphenate.kotlineaseim.permission.PermissionsManager
 import com.hyphenate.kotlineaseim.permission.PermissionsResultAction
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
     private var dialogCreateTime by Delegates.notNull<Long>()
     private lateinit var handler: Handler
+    private var loginLimit = 0
+    private var joinLimit = 0
     companion object {
         const val TAG = "MainActivity"
     }
@@ -42,47 +45,68 @@ class MainActivity : AppCompatActivity() {
                 ScreenUtil.instance.screenHeight = container.height
                 val loginViewmodel: LoginViewModel =
                     ViewModelProvider(this).get(LoginViewModel::class.java)
-                loginViewmodel.testObservable.observe(this, { result ->
-                    if (result["errorCode"].equals("0"))
+                loginViewmodel.registerObservable.observe(this, { result ->
+                    if (result[EaseConstant.ERROR_CODE].equals("0"))
+                        loginViewmodel.login(EaseConstant.USERNAME, EaseConstant.PASSWORD)
+                    else
+                        runOnUiThread {
+                            if(result[EaseConstant.ERROR_CODE].equals(EMError.USER_ALREADY_EXIST.toString())){
+                                loginViewmodel.login(EaseConstant.USERNAME, EaseConstant.PASSWORD)
+                            }else{
+                                dismissLoading()
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Register Failed:" + result[EaseConstant.ERROR_MSG],
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                })
+                loginViewmodel.loginObservable.observe(this, { result ->
+                    loginLimit ++
+                    if (result[EaseConstant.ERROR_CODE].equals("0"))
                         loginViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
                     else
                         runOnUiThread {
-                            dismissLoading()
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Login Failed:" + result["errorMsg"],
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if(loginLimit == 2){
+                                dismissLoading()
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Login Failed:" + result[EaseConstant.ERROR_MSG],
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }else
+                                loginViewmodel.login(EaseConstant.USERNAME, EaseConstant.PASSWORD)
                         }
                 })
                 loginViewmodel.joinObservable.observe(this, { result ->
+                    joinLimit ++
                     runOnUiThread {
                         dismissLoading()
-                        if (result["errorCode"].equals("0"))
+                        if (result[EaseConstant.ERROR_CODE].equals("0")) {
                             Toast.makeText(this@MainActivity, "Join Success!!!", Toast.LENGTH_SHORT)
                                 .show()
-                        else
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Join Failed:" + result["errorMsg"],
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            val fragment = ChatViewPager()
+                            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                                .commit()
+                        }else{
+                            if(joinLimit == 2){
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Join Failed:" + result[EaseConstant.ERROR_MSG],
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }else
+                                loginViewmodel.joinChatRoom(EaseConstant.CHATROOM_ID)
+                        }
+
+
                     }
                 })
 
-
-//        testViewmodel.loginObservable.observe(this, {
-//            Log.e("loginObservable:", it.toString())
-//        })
-//
-                loginViewmodel.login("easemob", "1")
+                loginViewmodel.createUser(EaseConstant.USERNAME, EaseConstant.PASSWORD)
                 showLoading()
             }
-
-
-            val fragment = ChatViewPager()
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
-                .commit()
         }
     }
 
@@ -123,5 +147,10 @@ class MainActivity : AppCompatActivity() {
                 dialog = null
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }

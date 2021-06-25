@@ -46,16 +46,29 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
 
     lateinit var cameraFile: File
     lateinit var context: Activity
-    lateinit var searchBar: EditText
+//    lateinit var searchBar: EditText
     lateinit var recyclerView: RecyclerView
     lateinit var chatViewmodel: ChatViewModel
     val softInputUtil = SoftInputUtil()
 
     var isShowSoft :Boolean = false
+    var isCreated = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         this.context = context as Activity
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCreated = true
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(!isCreated)
+            return
+        isVisibleToUser(isVisibleToUser)
     }
 
     override fun onCreateView(
@@ -120,14 +133,14 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
         Log.e(TAG, "onSendClick:$msgContent")
         if (msgContent.isNotEmpty()) {
             val message = EMMessage.createTxtSendMessage(msgContent, EaseConstant.CHATROOM_ID);
-            addExt(message)
+            setExtBeforeSend(message)
             sendMessage(message)
         }
     }
 
-    override fun onSearchClick() {
-
-    }
+//    override fun onSearchClick() {
+//
+//    }
 
     override fun onFocusChange(hasFocus: Boolean) {
 
@@ -154,7 +167,7 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
                 false,
                 EaseConstant.CHATROOM_ID
             )
-            addExt(message)
+            setExtBeforeSend(message)
             sendMessage(message)
         }
     }
@@ -177,7 +190,7 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
                 EMLog.e(ChatFragment.TAG, it.toString())
                 val message =
                     EMMessage.createImageSendMessage(data.data, false, EaseConstant.CHATROOM_ID)
-                addExt(message)
+                setExtBeforeSend(message)
                 sendMessage(message)
             }
         }
@@ -225,11 +238,13 @@ abstract class BaseFragment: Fragment(), InputMsgListener {
     /**
      * 设置消息扩展
      */
-    open fun addExt(message: EMMessage){}
+    open fun setExtBeforeSend(message: EMMessage){}
 
     /**
      * 发送消息
      */
     open fun sendMessage(message: EMMessage){}
+
+    abstract fun isVisibleToUser(isVisibleToUser: Boolean)
 
 }

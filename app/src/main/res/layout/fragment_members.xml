@@ -9,13 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin_normal"
+        android:background="@color/gray_light"
         >
     <EditText
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:paddingStart="5dp"
-        android:hint="请输入搜索内容"
+        android:hint="@string/enter_search_contents"
         android:background="@drawable/normal_role_bg"
         android:textSize="12sp"
         android:lines="1"

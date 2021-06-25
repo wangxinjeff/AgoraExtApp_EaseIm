@@ -19,8 +19,8 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="昵称"
+        android:textSize="@dimen/minSp"
+        android:text="@string/nickname"
         android:gravity="center"
         android:lines="1"
         android:ellipsize="end"
@@ -31,12 +31,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_normal"
-        android:textSize="10sp"
-        android:text="老师"
+        android:textSize="@dimen/minSp"
+        android:text="@string/teacher"
         android:gravity="center"
         android:theme="@style/lecturer_role_bg_style"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
+        />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
+    <ImageView
+        android:id="@+id/iv_mute"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:src="@mipmap/ic_launcher_round"
         />
 
 </LinearLayout>

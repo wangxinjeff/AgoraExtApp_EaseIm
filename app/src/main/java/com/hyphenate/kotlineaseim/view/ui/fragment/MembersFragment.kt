@@ -25,7 +25,7 @@ class MembersFragment : BaseFragment() {
     companion object{
         const val TAG = "MembersFragment"
     }
-
+    lateinit var searchBar: EditText
     private val adapter = MembersAdapter()
     override fun getLayoutId(): Int {
         return R.layout.fragment_members
@@ -58,10 +58,22 @@ class MembersFragment : BaseFragment() {
             } else
                 false
         }
+
+        softInputUtil.attachSoftInput(
+            searchBar
+        ) { isSoftInputShow, softInputHeight, viewOffset ->
+            isShowSoft = isSoftInputShow
+        }
     }
 
     override fun initData() {
         chatViewmodel.loadMembers(EaseConstant.CHATROOM_ID)
+    }
+
+    override fun isVisibleToUser(isVisibleToUser: Boolean) {
+        if(isShowSoft){
+            CommonUtil.hideSoftKeyboard(context, searchBar)
+        }
     }
 
 }

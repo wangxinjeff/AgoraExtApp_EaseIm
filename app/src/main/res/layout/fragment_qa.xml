@@ -19,19 +19,19 @@
         android:layout_alignParentBottom="true"
         />
 
-    <EditText
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:paddingStart="5dp"
-        android:layout_margin="5dp"
-        android:hint="请输入搜索内容"
-        android:background="@drawable/search_bar_bg"
-        android:textSize="12sp"
-        android:lines="1"
-        android:imeOptions="actionSearch|flagNoExtractUi"
-        tools:ignore="RtlSymmetry"
-        android:visibility="gone"
-        />
+<!--    <EditText-->
+<!--        android:id="@+id/search_bar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:paddingStart="5dp"-->
+<!--        android:layout_margin="5dp"-->
+<!--        android:hint="请输入搜索内容"-->
+<!--        android:background="@drawable/search_bar_bg"-->
+<!--        android:textSize="12sp"-->
+<!--        android:lines="1"-->
+<!--        android:imeOptions="actionSearch|flagNoExtractUi"-->
+<!--        tools:ignore="RtlSymmetry"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
 
 </RelativeLayout>

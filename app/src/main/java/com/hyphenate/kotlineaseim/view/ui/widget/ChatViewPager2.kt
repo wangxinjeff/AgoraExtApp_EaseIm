@@ -1,5 +1,7 @@
 package com.hyphenate.kotlineaseim.view.ui.widget
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -8,62 +10,72 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hyphenate.EMMessageListener
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
-import com.hyphenate.kotlineaseim.DataGenerator
+import com.hyphenate.kotlineaseim.DataGenerator2
 import com.hyphenate.kotlineaseim.R
-import com.hyphenate.kotlineaseim.constant.EaseConstant
 import com.hyphenate.kotlineaseim.livedatas.LiveDataBus
-import com.hyphenate.kotlineaseim.view.adapter.ChatViewPagerAdapter
-import com.hyphenate.kotlineaseim.view.ui.fragment.ChatFragment
-import com.hyphenate.kotlineaseim.view.ui.fragment.MembersFragment
-import com.hyphenate.kotlineaseim.view.ui.fragment.QAFragment
+import com.hyphenate.kotlineaseim.view.adapter.ChatViewPager2Adapter
 
 
-class ChatViewPager : Fragment(), EMMessageListener {
-    companion object {
+class ChatViewPager2 : Fragment(), EMMessageListener{
+    companion object{
         const val TAG = "ChatViewPager"
     }
 
-    private lateinit var tabLayout: TabLayout
+    private lateinit var tabLayout : TabLayout
+
+    private var tabList : MutableList<TabLayout.Tab> = mutableListOf()
+    private lateinit var context: Activity
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context as Activity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.chat_view2, container, false)
+        return inflater.inflate(R.layout.chat_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val viewPager: ViewPager = view.findViewById(R.id.viewPager)
-        val fragmentList = listOf<Fragment>(ChatFragment(), QAFragment(), MembersFragment())
-        val titleList = listOf<String>("聊天", "问答", "成员(99+)")
-        val viewPagerAdapter =
-            activity?.let { ChatViewPagerAdapter(it.supportFragmentManager, fragmentList) }
-        viewPager.adapter = viewPagerAdapter
-        viewPager.offscreenPageLimit = 2
+        val viewPager2: ViewPager2 = view.findViewById(R.id.viewPager)
+        val viewPagerAdapter = ChatViewPager2Adapter(this)
+        viewPager2.adapter = viewPagerAdapter
         tabLayout = view.findViewById(R.id.tab_layout)
-        for (index in fragmentList.indices)
-            tabLayout.addTab(
-                tabLayout.newTab().setCustomView(context?.let {
-                    DataGenerator.getTabView(
-                        it.applicationContext,
-                        titleList[index]
-                    )
-                })
-            )
-
+        val tabLayoutMediator = TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+            when(position){
+                0 -> {
+                    tab.customView = DataGenerator2.getTabView(context.applicationContext, 0)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLUE)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+                    tabList.add(0, tab)
+                }
+                1 -> {
+                    tab.customView = DataGenerator2.getTabView(context.applicationContext, 1)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
+                    tabList.add(1, tab)
+                }
+                else -> {
+                    tab.customView = DataGenerator2.getTabView(context.applicationContext, 2)
+                    tab.customView?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLACK)
+                    tabList.add(2, tab)
+                }
+            }
+        }
         recoverItem()
-        chooseFirst()
+        tabLayoutMediator.attach()
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 recoverItem()
                 chooseTab(tab)
-                tab?.position?.let { viewPager.setCurrentItem(it, true) }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -74,21 +86,13 @@ class ChatViewPager : Fragment(), EMMessageListener {
 
             }
         })
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-    }
-
-    private fun chooseFirst() {
-        val view = tabLayout.getTabAt(0)?.customView
-        view?.findViewById<TextView>(R.id.title)?.setTextColor(Color.BLUE)
-        view?.findViewById<TextView>(R.id.title)?.typeface =
-            Typeface.defaultFromStyle(Typeface.BOLD)
     }
 
     /**
      * 重置状态
      */
     private fun recoverItem() {
-        for (i in 0..2) {
+        for (i in 0..2){
             val title = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
             title?.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
             title?.setTextColor(Color.BLACK)
@@ -105,21 +109,8 @@ class ChatViewPager : Fragment(), EMMessageListener {
     }
 
     override fun onMessageReceived(messages: MutableList<EMMessage>?) {
-        messages?.let {
-            for (message in messages) {
-                if(message.type == EMMessage.Type.TXT || message.type == EMMessage.Type.IMAGE){
-                    val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-                    if(msgType == EaseConstant.ANSWER_MSG)
-                        LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)
-                            .postValue(EaseConstant.QA_MESSAGE)
-                    else
-                        LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)
-                            .postValue(EaseConstant.NORMAL_MESSAGE)
-                }
-            }
-
-        }
-
+        LiveDataBus.get().with("key")
+            .postValue("receiveMsg")
 
     }
 

@@ -29,7 +29,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
     lateinit var pictureIcon: ImageView
     lateinit var sendBtn: TextView
     private var listener: InputMsgListener? = null
-    lateinit var searchIcon: ImageView
+//    lateinit var searchIcon: ImageView
     private val activity: Activity = context as Activity
     private val inputManager: InputMethodManager =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -46,7 +46,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
         keyboardIcon = findViewById(R.id.iv_keyboard)
         pictureIcon = findViewById(R.id.iv_picture)
         sendBtn = findViewById(R.id.btn_send)
-        searchIcon = findViewById(R.id.iv_search)
+//        searchIcon = findViewById(R.id.iv_search)
 
         sendBtn.isEnabled = false
 
@@ -58,7 +58,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
         faceView.setOnClickListener(this)
         pictureIcon.setOnClickListener(this)
         sendBtn.setOnClickListener(this)
-        searchIcon.setOnClickListener(this)
+//        searchIcon.setOnClickListener(this)
         msgContent.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(
@@ -120,7 +120,7 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
                     msgContent.text.clear()
                     CommonUtil.hideSoftKeyboard(activity, msgContent)
                 }
-                R.id.iv_search -> listener?.onSearchClick()
+//                R.id.iv_search -> listener?.onSearchClick()
             }
         }
     }
