@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -29,6 +30,7 @@ class ChatViewPager : Fragment(), EMMessageListener {
     }
 
     private lateinit var tabLayout: TabLayout
+    private var chooseTab = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +65,10 @@ class ChatViewPager : Fragment(), EMMessageListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 recoverItem()
                 chooseTab(tab)
-                tab?.position?.let { viewPager.setCurrentItem(it, true) }
+                tab?.position?.let {
+                    chooseTab = it
+                    viewPager.setCurrentItem(it, true)
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -89,7 +94,7 @@ class ChatViewPager : Fragment(), EMMessageListener {
      */
     private fun recoverItem() {
         for (i in 0..2) {
-            val title = tabLayout?.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
+            val title = tabLayout.getTabAt(i)?.view?.findViewById<TextView>(R.id.title)
             title?.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
             title?.setTextColor(Color.BLACK)
         }
@@ -100,21 +105,44 @@ class ChatViewPager : Fragment(), EMMessageListener {
      */
     private fun chooseTab(tab: TabLayout.Tab?) {
         val title = tab?.view?.findViewById<TextView>(R.id.title)
+        val unread = tab?.view?.findViewById<ImageView>(R.id.iv_tips)
         title?.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
         title?.setTextColor(Color.BLUE)
+        unread?.visibility = View.INVISIBLE
+    }
+
+    private fun showChatUnread() {
+        activity?.runOnUiThread {
+            val unread = tabLayout.getTabAt(0)?.view?.findViewById<ImageView>(R.id.iv_tips)
+            unread?.visibility = View.VISIBLE
+        }
+
+    }
+
+    private fun showQAUnread() {
+        activity?.runOnUiThread {
+            val unread = tabLayout.getTabAt(1)?.view?.findViewById<ImageView>(R.id.iv_tips)
+            unread?.visibility = View.VISIBLE
+        }
     }
 
     override fun onMessageReceived(messages: MutableList<EMMessage>?) {
         messages?.let {
             for (message in messages) {
-                if(message.type == EMMessage.Type.TXT || message.type == EMMessage.Type.IMAGE){
-                    val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-                    if(msgType == EaseConstant.ANSWER_MSG)
+                if (message.type == EMMessage.Type.TXT || message.type == EMMessage.Type.IMAGE) {
+                    val msgType =
+                        message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
+                    if (msgType == EaseConstant.ANSWER_MSG) {
+                        if(chooseTab != 1)
+                            showQAUnread()
                         LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)
                             .postValue(EaseConstant.QA_MESSAGE)
-                    else
+                    } else {
+                        if(chooseTab != 0)
+                            showChatUnread()
                         LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)
                             .postValue(EaseConstant.NORMAL_MESSAGE)
+                    }
                 }
             }
 
