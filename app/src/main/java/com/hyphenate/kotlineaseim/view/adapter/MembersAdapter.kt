@@ -56,18 +56,24 @@ class MembersAdapter(val context: Context) : RecyclerView.Adapter<MembersAdapter
     }
 
     fun addData(u: User) {
+        sourceData.forEach { user ->
+            if (user.id == u.id) {
+                return@addData
+            }
+        }
         sourceData.add(u)
         filterData = sourceData
-        notifyItemChanged(filterData.size)
+        notifyItemInserted(filterData.size)
     }
 
     fun removeData(id: String) {
         sourceData.forEach { user ->
             if (user.id == id) {
+                val index = sourceData.indexOf(user)
                 sourceData.remove(user)
                 filterData = sourceData
-                notifyDataSetChanged()
-                return
+                notifyItemRemoved(index)
+                return@removeData
             }
         }
     }
