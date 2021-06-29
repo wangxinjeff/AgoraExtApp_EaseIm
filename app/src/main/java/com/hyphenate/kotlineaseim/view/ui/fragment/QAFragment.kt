@@ -30,6 +30,7 @@ class QAFragment : BaseFragment() {
 
     override fun initView(view: View) {
         inputMsgView = view.findViewById(R.id.input_view)
+        inputMsgView.hideFaceAndPic()
         recyclerView = view.findViewById(R.id.rv_list)
 //        searchBar = view.findViewById(R.id.search_bar)
         val layoutManager = LinearLayoutManager(context.applicationContext)
@@ -100,16 +101,16 @@ class QAFragment : BaseFragment() {
             }
         })
 
-        chatViewmodel.chatQAObservable.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                adapter.setData(it)
+        chatViewmodel.chatQAObservable.observe(viewLifecycleOwner, { messages ->
+            if (messages.isNotEmpty()) {
+                adapter.setData(messages)
                 recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
             }
         })
     }
 
     override fun initData() {
-        chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
+//        chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
     }
 
 //    override fun onEditTextClick() {
@@ -118,6 +119,11 @@ class QAFragment : BaseFragment() {
 //            searchBar.visibility = View.GONE
 //        }
 //    }
+
+    override fun onResume() {
+        super.onResume()
+        chatViewmodel.loadQAMessages(EaseConstant.CHATROOM_ID)
+    }
 
     override fun onFaceClick(isVisible: Boolean) {
         Log.e(TAG, "onFaceClick:$isVisible")

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.hyphenate.EMError
+import com.hyphenate.chat.EMClient
 import com.hyphenate.kotlineaseim.constant.EaseConstant
 import com.hyphenate.kotlineaseim.permission.PermissionsManager
 import com.hyphenate.kotlineaseim.permission.PermissionsResultAction
@@ -123,6 +124,9 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
+    /**
+     * 显示加载中
+     */
     private fun showLoading(){
         if(dialog?.isShowing == true)
             dialog?.dismiss()
@@ -133,6 +137,9 @@ class MainActivity : AppCompatActivity() {
         dialog?.show()
     }
 
+    /**
+     * 取消显示
+     */
     private fun dismissLoading(){
         if(dialog?.isShowing == true){
             if(System.currentTimeMillis() - dialogCreateTime < 500){
@@ -151,6 +158,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        EMClient.getInstance().chatroomManager().leaveChatRoom(EaseConstant.CHATROOM_ID)
+        EMClient.getInstance().logout(false)
         handler.removeCallbacksAndMessages(null)
     }
 }

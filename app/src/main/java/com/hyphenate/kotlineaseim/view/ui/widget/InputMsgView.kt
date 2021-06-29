@@ -29,10 +29,9 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
     lateinit var pictureIcon: ImageView
     lateinit var sendBtn: TextView
     private var listener: InputMsgListener? = null
-//    lateinit var searchIcon: ImageView
+
+    //    lateinit var searchIcon: ImageView
     private val activity: Activity = context as Activity
-    private val inputManager: InputMethodManager =
-        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
     init {
         LayoutInflater.from(context).inflate(R.layout.input_message_view, this)
@@ -127,6 +126,38 @@ class InputMsgView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
 
     fun addInputMsgListener(listener: InputMsgListener) {
         this.listener = listener
+    }
+
+    fun hideFaceAndPic() {
+        faceView.visibility = View.GONE
+        pictureIcon.visibility = View.GONE
+    }
+
+    fun showFaceAndPic() {
+        faceView.visibility = View.VISIBLE
+        pictureIcon.visibility = View.VISIBLE
+    }
+
+    /**
+     * 显示禁言UI
+     */
+    fun mutedRefreshUI() {
+        hideFaceAndPic()
+        msgContent.setText(context.getString(R.string.muted))
+        msgContent.isEnabled = false
+        sendBtn.isClickable = false
+        sendBtn.background = ContextCompat.getDrawable(context, R.drawable.input_send_btn_unenable)
+    }
+
+    /**
+     * 取消禁言UI
+     */
+    fun cancleMutedRefreshUI() {
+        showFaceAndPic()
+        msgContent.setText(context.getString(R.string.muted))
+        msgContent.isEnabled = true
+        sendBtn.isClickable = true
+        sendBtn.background = ContextCompat.getDrawable(context, R.drawable.input_send_btn_unenable)
     }
 
 }

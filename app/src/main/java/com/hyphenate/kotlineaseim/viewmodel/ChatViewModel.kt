@@ -17,34 +17,43 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     val chatQAObservable = MutableLiveData<List<EMMessage>>()
     val membersObservable = MutableLiveData<List<User>>()
     val announcementObservable = MutableLiveData<String>()
+    val singleObservable = MutableLiveData<User>()
 
     private val easeRepository = EaseRepository()
 
-    init {
-        Log.e(TAG, "ViewModel instance created")
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.e(TAG, "ViewModel instance about to be destroyed")
-    }
-
+    /**
+     * 加载普通消息
+     */
     fun loadMessages(conversationId: String){
         easeRepository.loadMessages(conversationId, chatObservable)
 
     }
 
+    /**
+     * 加载问答消息
+     */
     fun loadQAMessages(conversationId: String){
         easeRepository.loadQAMessages(conversationId, chatQAObservable)
     }
 
+    /**
+     * 加载所有成员
+     */
     fun loadMembers(chatRoomId: String){
         easeRepository.loadMembers(chatRoomId, membersObservable)
     }
 
+    /**
+     * 获取公告
+     */
     fun fetchAnnouncement(chatRoomId: String){
         easeRepository.fetchAnnouncement(chatRoomId, announcementObservable)
     }
 
-
+    /**
+     * 加载单个成员
+     */
+    fun loadSingleUser(userId: String){
+        easeRepository.loadSingleUser(userId, singleObservable)
+    }
 }

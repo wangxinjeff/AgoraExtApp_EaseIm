@@ -1,10 +1,7 @@
 package com.hyphenate.kotlineaseim.view.ui.fragment
 
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -92,6 +89,16 @@ class ChatFragment : BaseFragment() {
             }
         })
 
+        LiveDataBus.get().with(EaseConstant.ANNOUNCEMENT_CHANGE).observe(viewLifecycleOwner, { announcement ->
+            if (announcement.toString().isNotEmpty()) {
+                announcementView.text = announcement.toString()
+                announceContent.text = announcement.toString()
+            }else {
+                announcementView.text = getString(R.string.default_announcement)
+                announceContent.text = getString(R.string.default_announcement)
+            }
+        })
+
         softInputUtil.attachSoftInput(
             inputMsgView
         ) { isSoftInputShow, softInputHeight, viewOffset ->
@@ -146,7 +153,7 @@ class ChatFragment : BaseFragment() {
     }
 
     override fun initData() {
-        chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
+//        chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
         chatViewmodel.fetchAnnouncement(EaseConstant.CHATROOM_ID)
     }
 
@@ -157,6 +164,11 @@ class ChatFragment : BaseFragment() {
 //            announcementView.visibility = View.VISIBLE
 //        }
 //    }
+
+    override fun onResume() {
+        super.onResume()
+        chatViewmodel.loadMessages(EaseConstant.CHATROOM_ID)
+    }
 
     override fun onFaceClick(isVisible: Boolean) {
         Log.e(TAG, "onFaceClick:$isVisible")

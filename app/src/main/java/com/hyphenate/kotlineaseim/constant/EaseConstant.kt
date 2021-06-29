@@ -27,4 +27,11 @@ object EaseConstant {
     const val ERROR_CODE = "errorCode"
     const val ERROR_MSG = "errorMsg"
 
+    const val MEMBER_COUNT = "member_count"
+    
+    const val CHAT_ROOM = "chat_room"
+    const val ANNOUNCEMENT_CHANGE = "announcement_change"
+    const val MEMBER_EXIT = "member_exit"
+    const val MEMBER_JOIN = "member_join"
+
 }

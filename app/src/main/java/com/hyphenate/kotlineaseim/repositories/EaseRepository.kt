@@ -1,5 +1,6 @@
 package com.hyphenate.kotlineaseim.repositories
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.hyphenate.EMCallBack
 import com.hyphenate.EMValueCallBack
@@ -15,14 +16,14 @@ class EaseRepository : BaseRepository() {
         const val TAG = "EaseRepository"
     }
 
-    fun createUser(userName: String, pwd: String, data: MutableLiveData<Map<String, String>>){
+    fun createUser(userName: String, pwd: String, data: MutableLiveData<Map<String, String>>) {
         runOnIOThread {
             try {
                 EMClient.getInstance().createAccount(userName, pwd)
                 val result: MutableMap<String, String> = mutableMapOf()
                 result[EaseConstant.ERROR_CODE] = "0"
                 data.postValue(result)
-            }catch (e: HyphenateException){
+            } catch (e: HyphenateException) {
                 e.printStackTrace()
                 val result: MutableMap<String, String> = mutableMapOf()
                 result[EaseConstant.ERROR_CODE] = e.errorCode.toString()
@@ -79,9 +80,9 @@ class EaseRepository : BaseRepository() {
             .getConversation(conversationId, EMConversation.EMConversationType.ChatRoom, true)
         val msgList = conversation.allMessages
         val norMsgList = mutableListOf<EMMessage>()
-        for(message in msgList){
+        for (message in msgList) {
             val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-            if(msgType == 0)
+            if (msgType == 0)
                 norMsgList.add(message)
         }
         data.postValue(norMsgList)
@@ -92,9 +93,9 @@ class EaseRepository : BaseRepository() {
             .getConversation(conversationId, EMConversation.EMConversationType.ChatRoom, true)
         val msgList = conversation.allMessages
         val qaMsgList = mutableListOf<EMMessage>()
-        for(message in msgList){
+        for (message in msgList) {
             val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-            if(msgType in 1..2)
+            if (msgType in 1..2)
                 qaMsgList.add(message)
         }
         data.postValue(qaMsgList)
@@ -102,11 +103,12 @@ class EaseRepository : BaseRepository() {
 
     fun loadMembers(chatRoomId: String, data: MutableLiveData<List<User>>) {
         runOnIOThread {
-            var users = mutableListOf<User>()
+            val users = mutableListOf<User>()
             val members = mutableListOf<String>()
             val room = EMClient.getInstance().chatroomManager().fetchChatRoomFromServer(chatRoomId)
             members.add(room.owner)
             members.addAll(room.adminList)
+            Log.e("memberCount:", room.memberCount.toString())
             var result = EMCursorResult<String>()
             do {
                 result = EMClient.getInstance().chatroomManager().fetchChatRoomMembers(
@@ -116,29 +118,69 @@ class EaseRepository : BaseRepository() {
                 )
                 members.addAll(result.data)
             } while (result.cursor.isNotEmpty())
-            EMClient.getInstance().userInfoManager().fetchUserInfoByUserId(
-                members.toTypedArray(),
-                object : EMValueCallBack<Map<String, EMUserInfo>> {
-                    override fun onSuccess(value: Map<String, EMUserInfo>?) {
-                        value?.forEach { item ->
-                            EMLog.e(TAG, item.value.nickName)
-                            users.add(
-                                User(
-                                    item.value.userId,
-                                    item.value.avatarUrl,
-                                    item.value.nickName,
-                                    item.value.ext
+            val totalCount = members.size
+            if (members.size > 100) {
+                do {
+                    val memberList = mutableListOf<String>()
+                    val size = members.size
+                    for (i in 0 until size) {
+                        val index = members[i]
+                        memberList.add(index)
+                        if (memberList.size == 100)
+                            break
+                    }
+                    members.removeAll(memberList)
+                    EMClient.getInstance().userInfoManager().fetchUserInfoByUserId(
+                        memberList.toTypedArray(),
+                        object : EMValueCallBack<Map<String, EMUserInfo>> {
+                            override fun onSuccess(value: Map<String, EMUserInfo>?) {
+                                value?.forEach { item ->
+                                    EMLog.e(TAG, item.value.nickName)
+                                    users.add(
+                                        User(
+                                            item.value.userId,
+                                            item.value.avatarUrl,
+                                            item.value.nickName,
+                                            item.value.ext
+                                        )
+                                    )
+                                }
+                                if (users.size == totalCount) {
+                                    data.postValue(users)
+                                }
+                            }
+
+                            override fun onError(error: Int, errorMsg: String?) {
+
+                            }
+
+                        })
+                } while (members.size > 0)
+            } else {
+                EMClient.getInstance().userInfoManager().fetchUserInfoByUserId(
+                    members.toTypedArray(),
+                    object : EMValueCallBack<Map<String, EMUserInfo>> {
+                        override fun onSuccess(value: Map<String, EMUserInfo>?) {
+                            value?.forEach { item ->
+                                EMLog.e(TAG, item.value.nickName)
+                                users.add(
+                                    User(
+                                        item.value.userId,
+                                        item.value.avatarUrl,
+                                        item.value.nickName,
+                                        item.value.ext
+                                    )
                                 )
-                            )
+                            }
+                            data.postValue(users)
                         }
-                        data.postValue(users)
-                    }
 
-                    override fun onError(error: Int, errorMsg: String?) {
+                        override fun onError(error: Int, errorMsg: String?) {
 
-                    }
+                        }
 
-                })
+                    })
+            }
         }
     }
 
@@ -155,4 +197,28 @@ class EaseRepository : BaseRepository() {
 
             })
     }
+
+    fun loadSingleUser(userId: String, data: MutableLiveData<User>) {
+        EMClient.getInstance().userInfoManager().fetchUserInfoByUserId(arrayOf(userId),
+            object : EMValueCallBack<Map<String, EMUserInfo>> {
+                override fun onSuccess(value: Map<String, EMUserInfo>?) {
+                    value?.forEach { item ->
+                        val user = User(
+                            item.value.userId,
+                            item.value.avatarUrl,
+                            item.value.nickName,
+                            item.value.ext
+                        )
+                        data.postValue(user)
+                    }
+                }
+
+                override fun onError(error: Int, errorMsg: String?) {
+
+                }
+
+            })
+    }
+
+
 }

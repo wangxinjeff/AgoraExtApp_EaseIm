@@ -15,4 +15,8 @@
     <string name="announcement">公告</string>
     <string name="know">知道了</string>
     <string name="default_announcement">暂无公告</string>
+    <string name="question_answer">问答</string>
+    <string name="members">成员%s</string>
+    <string name="members_max">成员(99+)</string>
+    <string name="muted">禁言中</string>
 </resources>

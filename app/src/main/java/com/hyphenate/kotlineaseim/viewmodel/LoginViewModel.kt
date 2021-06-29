@@ -17,25 +17,25 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val easeRepository = EaseRepository()
 
-    init {
-        Log.e(TAG, "ViewModel instance created")
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.e(TAG, "ViewModel instance about to be destroyed")
-    }
-
+    /**
+     * 登录环信
+     */
     fun login(userName: String, pwd: String){
         easeRepository.login(userName, pwd,loginObservable)
 
     }
 
+    /**
+     * 加入聊天室
+     */
     fun joinChatRoom(chatRoomId: String){
         easeRepository.joinRoom(chatRoomId,joinObservable)
 
     }
 
+    /**
+     * 创建账号
+     */
     fun createUser(userName: String, pwd: String){
         easeRepository.createUser(userName, pwd, registerObservable)
     }
