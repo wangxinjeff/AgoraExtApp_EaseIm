@@ -33,9 +33,8 @@ const val TAG = "CommonUtil"
 object CommonUtil {
 
     /**
-     * check if sdcard exist
+     * 判断sdcard是否存在
      *
-     * @return
      */
     fun isSdcardExist(): Boolean {
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
@@ -49,9 +48,6 @@ object CommonUtil {
     }
 
     private fun getLastSubFromUri(fileUri: Uri): String? {
-        if (fileUri == null) {
-            return ""
-        }
         val uri = fileUri.toString()
         if (!uri.contains("/")) {
             return ""
@@ -205,9 +201,6 @@ object CommonUtil {
         if (radio == 0f) {
             radio = 1f
         }
-
-        //按原图展示的情况
-
         //按原图展示的情况
         if (maxHeight == 0 && maxWidth == 0 /*|| (width <= maxWidth && height <= maxHeight)*/) {
             if (context is Activity && (context.isFinishing || context.isDestroyed)) {
@@ -282,6 +275,7 @@ object CommonUtil {
         info[4] = m.scaledDensity
         return info
     }
+
     /**
      * 隐藏软键盘
      */

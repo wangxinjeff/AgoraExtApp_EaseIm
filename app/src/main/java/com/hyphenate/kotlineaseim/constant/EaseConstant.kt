@@ -34,4 +34,6 @@ object EaseConstant {
     const val MEMBER_EXIT = "member_exit"
     const val MEMBER_JOIN = "member_join"
 
+    const val ASKER = "asker"
+
 }

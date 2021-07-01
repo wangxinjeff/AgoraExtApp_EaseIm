@@ -1,6 +1,7 @@
 package com.hyphenate.kotlineaseim.view.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,9 +29,10 @@ class MembersAdapter(val context: Context) : RecyclerView.Adapter<MembersAdapter
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val user = getItem(position)
         holder.name.text =
-            if (getItem(position).name.isNotEmpty()) getItem(position).name else getItem(position).id
-            if (getItem(position).role.isNotEmpty()) {
+            if (user.name.isNotEmpty()) user.name else user.id
+            if (user.role.isNotEmpty()) {
                 when (getItem(position).role) {
                     "3" -> holder.role.text = context.getString(R.string.assistant)
                     "2" -> holder.role.text = context.getString(R.string.student)
@@ -40,7 +42,7 @@ class MembersAdapter(val context: Context) : RecyclerView.Adapter<MembersAdapter
             }
         Glide.with(context).load(
             getItem(position).avatar
-        ).apply(RequestOptions.bitmapTransform(CircleCrop())).error(R.mipmap.ic_launcher_round)
+        ).apply(RequestOptions.bitmapTransform(CircleCrop())).error(R.mipmap.default_avatar)
             .into(
                 holder.avatar
             )

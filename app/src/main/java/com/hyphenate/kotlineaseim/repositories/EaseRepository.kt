@@ -7,7 +7,6 @@ import com.hyphenate.EMValueCallBack
 import com.hyphenate.chat.*
 import com.hyphenate.exceptions.HyphenateException
 import com.hyphenate.kotlineaseim.constant.EaseConstant
-import com.hyphenate.kotlineaseim.manager.ThreadManager
 import com.hyphenate.kotlineaseim.model.User
 import com.hyphenate.util.EMLog
 
@@ -82,7 +81,7 @@ class EaseRepository : BaseRepository() {
         val norMsgList = mutableListOf<EMMessage>()
         for (message in msgList) {
             val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-            if (msgType == 0)
+            if (msgType == EaseConstant.NORMAL_MSG)
                 norMsgList.add(message)
         }
         data.postValue(norMsgList)
@@ -95,8 +94,17 @@ class EaseRepository : BaseRepository() {
         val qaMsgList = mutableListOf<EMMessage>()
         for (message in msgList) {
             val msgType = message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-            if (msgType in 1..2)
-                qaMsgList.add(message)
+            when (msgType) {
+                EaseConstant.QUES_MSG -> {
+                    if (message.direct() == EMMessage.Direct.SEND)
+                        qaMsgList.add(message)
+                }
+                EaseConstant.ANSWER_MSG -> {
+                    val asKer = message.getStringAttribute(EaseConstant.ASKER, "")
+                    if (asKer.equals(EMClient.getInstance().currentUser))
+                        qaMsgList.add(message)
+                }
+            }
         }
         data.postValue(qaMsgList)
     }

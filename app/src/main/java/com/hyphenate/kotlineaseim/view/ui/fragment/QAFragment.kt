@@ -167,7 +167,7 @@ class QAFragment : BaseFragment() {
     }
 
     override fun isVisibleToUser(isVisibleToUser: Boolean) {
-        if(isShowSoft){
+        if(isShowSoft && !isVisibleToUser){
             inputMsgView.translationY = 0F
             CommonUtil.hideSoftKeyboard(context, inputMsgView.msgContent)
         }

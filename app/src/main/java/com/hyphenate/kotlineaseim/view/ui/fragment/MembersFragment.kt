@@ -1,28 +1,17 @@
 package com.hyphenate.kotlineaseim.view.ui.fragment
 
-import android.app.Activity
-import android.content.Context
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.hyphenate.kotlineaseim.R
 import com.hyphenate.kotlineaseim.constant.EaseConstant
 import com.hyphenate.kotlineaseim.livedatas.LiveDataBus
-import com.hyphenate.kotlineaseim.model.User
 import com.hyphenate.kotlineaseim.utils.CommonUtil
 import com.hyphenate.kotlineaseim.view.adapter.MembersAdapter
-import com.hyphenate.kotlineaseim.viewmodel.ChatViewModel
 
 class MembersFragment : BaseFragment() {
 
@@ -50,15 +39,14 @@ class MembersFragment : BaseFragment() {
             if (members.isNotEmpty()) {
                 LiveDataBus.get().with(EaseConstant.MEMBER_COUNT)
                     .postValue(members.size)
-                Log.e("memberCount", members.size.toString())
                 adapter.setData(members)
 //                recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
             }
         })
 
-        chatViewmodel.singleObservable.observe(viewLifecycleOwner, { user ->
+        chatViewmodel.singleObservable.observe(viewLifecycleOwner) { user ->
             adapter.addData(user)
-        })
+        }
 
         searchBar.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
@@ -111,7 +99,7 @@ class MembersFragment : BaseFragment() {
     }
 
     override fun isVisibleToUser(isVisibleToUser: Boolean) {
-        if(isShowSoft){
+        if(isShowSoft && !isVisibleToUser){
             CommonUtil.hideSoftKeyboard(context, searchBar)
         }
     }

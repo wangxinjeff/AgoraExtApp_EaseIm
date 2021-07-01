@@ -41,6 +41,7 @@
         android:layout_marginEnd="@dimen/margin_normal"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
+        android:visibility="invisible"
         />
 
     <TextView
@@ -75,6 +76,4 @@
         android:src="@mipmap/warning"
         android:visibility="invisible"
         />
-
-
 </RelativeLayout>

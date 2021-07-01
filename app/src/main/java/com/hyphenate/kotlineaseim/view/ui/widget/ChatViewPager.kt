@@ -159,12 +159,14 @@ class ChatViewPager : Fragment(), EMMessageListener, EMChatRoomChangeListener {
                 if (message.type == EMMessage.Type.TXT || message.type == EMMessage.Type.IMAGE) {
                     val msgType =
                         message.getIntAttribute(EaseConstant.MSG_TYPE, EaseConstant.NORMAL_MSG)
-                    if (msgType == EaseConstant.ANSWER_MSG) {
+                    val asKer =
+                        message.getStringAttribute(EaseConstant.ASKER, "")
+                    if (msgType == EaseConstant.ANSWER_MSG && asKer.equals(EMClient.getInstance().currentUser)) {
                         if (chooseTab != 1)
                             showQAUnread()
                         LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)
                             .postValue(EaseConstant.QA_MESSAGE)
-                    } else {
+                    } else if (msgType == EaseConstant.NORMAL_MSG) {
                         if (chooseTab != 0)
                             showChatUnread()
                         LiveDataBus.get().with(EaseConstant.CHAT_MESSAGE)

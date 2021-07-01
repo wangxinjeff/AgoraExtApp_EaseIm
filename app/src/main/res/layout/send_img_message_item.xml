@@ -43,6 +43,7 @@
         android:layout_marginEnd="@dimen/margin_normal"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
+        android:visibility="invisible"
         />
 
     <ImageView
